@@ -1,14 +1,16 @@
-"use client"
+'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
+import { useLocale } from 'next-intl'
 
 type Contact = {
   id: string
-  nom: string
-  prenom: string
+  lastName: string
+  firstName: string
   email: string
-  tel: string | null
-  sujet: string | null
+  phone: string | null
+  subject: string | null
   message: string
   read: boolean
   createdAt: string
@@ -42,6 +44,8 @@ type AboutSection = {
 }
 
 export default function AdminCMS() {
+  const t = useTranslations('admin')
+  const locale = useLocale()
   const [tab, setTab] = useState<'dashboard' | 'projects' | 'skills' | 'about' | 'contacts'>('dashboard')
   const [contacts, setContacts] = useState<Contact[]>([])
   const [projects, setProjects] = useState<Project[]>([])
@@ -80,7 +84,7 @@ export default function AdminCMS() {
         setAboutSections(data.sections || [])
       }
     } catch (error) {
-      console.error('Erreur:', error)
+      console.error('Error:', error)
     } finally {
       setLoading(false)
     }
@@ -92,30 +96,30 @@ export default function AdminCMS() {
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-red-500">CMS Admin</h1>
-            <p className="mt-2 text-zinc-400">Gérez votre portfolio</p>
+            <h1 className="text-4xl font-bold text-red-500">{t('title')}</h1>
+            <p className="mt-2 text-zinc-400">{t('subtitle')}</p>
           </div>
-          <a href="/" className="rounded-lg bg-zinc-800 px-4 py-2 hover:bg-zinc-700">
-            ← Retour au site
+          <a href={`/${locale}`} className="rounded-lg bg-zinc-800 px-4 py-2 hover:bg-zinc-700">
+            {t('backToSite')}
           </a>
         </div>
 
         {/* Tabs */}
         <div className="mb-8 flex gap-2 border-b border-zinc-800">
           <Tab active={tab === 'dashboard'} onClick={() => setTab('dashboard')}>
-            Dashboard
+            {t('tabs.dashboard')}
           </Tab>
           <Tab active={tab === 'projects'} onClick={() => setTab('projects')}>
-            Projets ({projects.length})
+            {t('tabs.projects')} ({projects.length})
           </Tab>
           <Tab active={tab === 'skills'} onClick={() => setTab('skills')}>
-            Compétences ({skills.length})
+            {t('tabs.skills')} ({skills.length})
           </Tab>
           <Tab active={tab === 'about'} onClick={() => setTab('about')}>
-            À propos
+            {t('tabs.about')}
           </Tab>
           <Tab active={tab === 'contacts'} onClick={() => setTab('contacts')}>
-            Messages ({contacts.length})
+            {t('tabs.contacts')} ({contacts.length})
           </Tab>
         </div>
 
@@ -138,7 +142,7 @@ export default function AdminCMS() {
   )
 }
 
-function Tab({ active, onClick, children }: any) {
+function Tab({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <button
       onClick={onClick}
@@ -151,63 +155,67 @@ function Tab({ active, onClick, children }: any) {
   )
 }
 
-function Dashboard({ contacts, projects, skills }: any) {
-  const unreadCount = contacts.filter((c: Contact) => !c.read).length
-  const publishedProjects = projects.filter((p: Project) => p.published).length
+function Dashboard({ contacts, projects, skills }: { contacts: Contact[]; projects: Project[]; skills: Skill[] }) {
+  const t = useTranslations('admin.dashboard')
+  const unreadCount = contacts.filter((c) => !c.read).length
+  const publishedProjects = projects.filter((p) => p.published).length
 
   return (
     <div className="space-y-6">
       {/* Stats */}
       <div className="grid gap-6 md:grid-cols-3">
         <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6">
-          <h3 className="text-sm text-zinc-400">Messages</h3>
+          <h3 className="text-sm text-zinc-400">{t('messages')}</h3>
           <p className="text-3xl font-bold mt-2">{contacts.length}</p>
-          <p className="text-sm text-zinc-500 mt-1">{unreadCount} non lus</p>
+          <p className="text-sm text-zinc-500 mt-1">{unreadCount} {t('unread')}</p>
         </div>
         <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6">
-          <h3 className="text-sm text-zinc-400">Projets</h3>
+          <h3 className="text-sm text-zinc-400">{t('projects')}</h3>
           <p className="text-3xl font-bold mt-2">{projects.length}</p>
-          <p className="text-sm text-zinc-500 mt-1">{publishedProjects} publiés</p>
+          <p className="text-sm text-zinc-500 mt-1">{publishedProjects} {t('published')}</p>
         </div>
         <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6">
-          <h3 className="text-sm text-zinc-400">Compétences</h3>
+          <h3 className="text-sm text-zinc-400">{t('skills')}</h3>
           <p className="text-3xl font-bold mt-2">{skills.length}</p>
         </div>
       </div>
 
       {/* Info */}
       <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6">
-        <h3 className="text-lg font-semibold mb-4">Comment utiliser le CMS ?</h3>
+        <h3 className="text-lg font-semibold mb-4">{t('howToUse')}</h3>
         <ul className="space-y-2 text-zinc-300">
-          <li>• <strong>Projets</strong> : Ajoutez, modifiez ou supprimez vos projets</li>
-          <li>• <strong>Compétences</strong> : Gérez vos compétences et leur notation</li>
-          <li>• <strong>À propos</strong> : Modifiez le contenu de votre page À propos</li>
-          <li>• <strong>Messages</strong> : Consultez les messages reçus via le formulaire</li>
+          <li>• <strong>{t('instructions.projects')}</strong></li>
+          <li>• <strong>{t('instructions.skills')}</strong></li>
+          <li>• <strong>{t('instructions.about')}</strong></li>
+          <li>• <strong>{t('instructions.messages')}</strong></li>
         </ul>
         <p className="mt-4 text-sm text-zinc-500">
-          💡 Astuce : Utilisez aussi <code className="rounded bg-zinc-800 px-2 py-1">npm run db:studio</code> pour gérer vos données visuellement
+          💡 {t('tip')} <code className="rounded bg-zinc-800 px-2 py-1">npm run db:studio</code> {t('tipCommand')}
         </p>
       </div>
     </div>
   )
 }
 
-function ProjectsManager({ projects, onRefresh }: any) {
+function ProjectsManager({ projects, onRefresh }: { projects: Project[]; onRefresh: () => void }) {
+  const t = useTranslations('admin.projectsManager')
+  const tProjects = useTranslations('projects')
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Gestion des projets</h2>
+        <h2 className="text-2xl font-bold">{t('title')}</h2>
         <p className="text-sm text-zinc-500">
-          Utilisez <code className="rounded bg-zinc-800 px-2 py-1">npm run db:studio</code> pour ajouter/modifier
+          {t('useStudio')} <code className="rounded bg-zinc-800 px-2 py-1">npm run db:studio</code> {t('toAddEdit')}
         </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {projects.map((project: Project) => (
+        {projects.map((project) => (
           <div key={project.id} className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4">
             {project.featured && (
               <span className="inline-block rounded bg-yellow-500/20 px-2 py-1 text-xs text-yellow-500 mb-2">
-                En vedette
+                ⭐ {tProjects('featuredBadge')}
               </span>
             )}
             <h3 className="font-semibold text-lg">{project.title}</h3>
@@ -215,16 +223,18 @@ function ProjectsManager({ projects, onRefresh }: any) {
               {project.shortDesc || project.description}
             </p>
             <div className="mt-3 flex flex-wrap gap-1">
-              {project.tags.slice(0, 3).map((tag: string) => (
+              {project.tags.slice(0, 3).map((tag) => (
                 <span key={tag} className="rounded bg-zinc-800 px-2 py-0.5 text-xs">
                   {tag}
                 </span>
               ))}
             </div>
             <div className="mt-4 flex gap-2 text-xs">
-              <span className="rounded bg-red-500/20 px-2 py-1 text-red-400">{project.category}</span>
+              <span className="rounded bg-red-500/20 px-2 py-1 text-red-400">
+                {tProjects(`categories.${project.category}`)}
+              </span>
               {!project.published && (
-                <span className="rounded bg-orange-500/20 px-2 py-1 text-orange-400">Brouillon</span>
+                <span className="rounded bg-orange-500/20 px-2 py-1 text-orange-400">{t('draft')}</span>
               )}
             </div>
           </div>
@@ -234,27 +244,31 @@ function ProjectsManager({ projects, onRefresh }: any) {
   )
 }
 
-function SkillsManager({ skills, onRefresh }: any) {
-  const grouped = skills.reduce((acc: any, skill: Skill) => {
+function SkillsManager({ skills, onRefresh }: { skills: Skill[]; onRefresh: () => void }) {
+  const t = useTranslations('admin.skillsManager')
+  const tProjects = useTranslations('admin.projectsManager')
+  const tSkills = useTranslations('skills')
+  
+  const grouped = skills.reduce((acc, skill) => {
     if (!acc[skill.category]) acc[skill.category] = []
     acc[skill.category].push(skill)
     return acc
-  }, {})
+  }, {} as Record<string, Skill[]>)
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Gestion des compétences</h2>
+        <h2 className="text-2xl font-bold">{t('title')}</h2>
         <p className="text-sm text-zinc-500">
-          Utilisez <code className="rounded bg-zinc-800 px-2 py-1">npm run db:studio</code> pour ajouter/modifier
+          {tProjects('useStudio')} <code className="rounded bg-zinc-800 px-2 py-1">npm run db:studio</code> {tProjects('toAddEdit')}
         </p>
       </div>
 
-      {Object.entries(grouped).map(([category, categorySkills]: [string, any]) => (
+      {Object.entries(grouped).map(([category, categorySkills]) => (
         <div key={category}>
-          <h3 className="text-xl font-semibold mb-3 capitalize">{category}</h3>
+          <h3 className="text-xl font-semibold mb-3">{tSkills(`categories.${category}`)}</h3>
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {categorySkills.map((skill: Skill) => (
+            {categorySkills.map((skill) => (
               <div key={skill.id} className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-3">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-medium">{skill.title}</span>
@@ -279,7 +293,8 @@ function SkillsManager({ skills, onRefresh }: any) {
   )
 }
 
-function AboutManager({ sections, onRefresh }: any) {
+function AboutManager({ sections, onRefresh }: { sections: AboutSection[]; onRefresh: () => void }) {
+  const t = useTranslations('admin.aboutManager')
   const [editing, setEditing] = useState<string | null>(null)
   const [formData, setFormData] = useState({ title: '', content: '' })
 
@@ -295,16 +310,16 @@ function AboutManager({ sections, onRefresh }: any) {
         setEditing(null)
         onRefresh()
       }
-    } catch (error) {
-      alert('Erreur lors de la sauvegarde')
+    } catch {
+      alert('Error saving')
     }
   }
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Contenu de la page "À propos"</h2>
+      <h2 className="text-2xl font-bold">{t('title')}</h2>
 
-      {sections.map((section: AboutSection) => (
+      {sections.map((section) => (
         <div key={section.id} className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6">
           {editing === section.id ? (
             <div className="space-y-4">
@@ -313,27 +328,27 @@ function AboutManager({ sections, onRefresh }: any) {
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2"
-                placeholder="Titre"
+                placeholder={t('titlePlaceholder')}
               />
               <textarea
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 rows={10}
                 className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2"
-                placeholder="Contenu"
+                placeholder={t('contentPlaceholder')}
               />
               <div className="flex gap-2">
                 <button
                   onClick={() => handleSave(section.id)}
                   className="rounded bg-red-600 px-4 py-2 hover:bg-red-500"
                 >
-                  Sauvegarder
+                  {t('save')}
                 </button>
                 <button
                   onClick={() => setEditing(null)}
                   className="rounded bg-zinc-800 px-4 py-2 hover:bg-zinc-700"
                 >
-                  Annuler
+                  {t('cancel')}
                 </button>
               </div>
             </div>
@@ -348,7 +363,7 @@ function AboutManager({ sections, onRefresh }: any) {
                   }}
                   className="rounded bg-zinc-800 px-3 py-1.5 text-sm hover:bg-zinc-700"
                 >
-                  Modifier
+                  {t('edit')}
                 </button>
               </div>
               <p className="whitespace-pre-wrap text-zinc-300">{section.content}</p>
@@ -360,15 +375,17 @@ function AboutManager({ sections, onRefresh }: any) {
   )
 }
 
-function ContactsViewer({ contacts }: any) {
+function ContactsViewer({ contacts }: { contacts: Contact[] }) {
+  const t = useTranslations('admin.contactsViewer')
+
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold">Messages reçus</h2>
+      <h2 className="text-2xl font-bold">{t('title')}</h2>
 
       {contacts.length === 0 ? (
-        <p className="text-center text-zinc-500 py-12">Aucun message</p>
+        <p className="text-center text-zinc-500 py-12">{t('noMessages')}</p>
       ) : (
-        contacts.map((contact: Contact) => (
+        contacts.map((contact) => (
           <div
             key={contact.id}
             className={`rounded-xl border p-6 ${
@@ -381,22 +398,22 @@ function ContactsViewer({ contacts }: any) {
               <div>
                 <div className="flex items-center gap-3">
                   <h3 className="text-lg font-semibold">
-                    {contact.nom} {contact.prenom}
+                    {contact.lastName} {contact.firstName}
                   </h3>
                   {!contact.read && (
                     <span className="rounded-full bg-red-500 px-2 py-0.5 text-xs text-white">
-                      Nouveau
+                      {t('new')}
                     </span>
                   )}
                 </div>
                 <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-zinc-400">
                   <span>{contact.email}</span>
-                  {contact.tel && <span>📞 {contact.tel}</span>}
-                  {contact.sujet && <span>{contact.sujet}</span>}
+                  {contact.phone && <span>📞 {contact.phone}</span>}
+                  {contact.subject && <span>{contact.subject}</span>}
                 </div>
               </div>
               <time className="text-sm text-zinc-500">
-                {new Date(contact.createdAt).toLocaleDateString('fr-FR')}
+                {new Date(contact.createdAt).toLocaleDateString()}
               </time>
             </div>
             <p className="mt-4 whitespace-pre-wrap text-zinc-300">{contact.message}</p>

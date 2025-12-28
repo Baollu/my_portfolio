@@ -1,36 +1,35 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { error } from "console";
 
 export async function GET(
   req: Request,
-  {params}: {params: {id: string}}
+  { params }: { params: { id: string } }
 ) {
   try {
     const project = await prisma.project.findUnique({
-      where: {id: params.id}
+      where: { id: params.id }
     })
 
     if (!project) {
       return NextResponse.json(
-        {error: 'project not found'},
-        {status: 404}
+        { error: 'Project not found' },
+        { status: 404 }
       )
     }
 
-    return NextResponse.json({project})
+    return NextResponse.json({ project })
   } catch (error) {
-    console.error("Error GET project:", error)
+    console.error('GET project error:', error)
     return NextResponse.json(
-      { error: "Error to fetch project"},
-      {status: 500}
+      { error: 'Error fetching project' },
+      { status: 500 }
     )
   }
 }
 
 export async function PUT(
   req: Request,
-  {params}: {params: {id: string}}
+  { params }: { params: { id: string } }
 ) {
   try {
     const body = await req.json()
@@ -49,13 +48,13 @@ export async function PUT(
     } = body
 
     const existingProject = await prisma.project.findUnique({
-      where: {id: params.id},
+      where: { id: params.id },
     })
 
     if (!existingProject) {
       return NextResponse.json(
-        {error: 'Project not found'},
-        {status: 404}
+        { error: 'Project not found' },
+        { status: 404 }
       )
     }
 
@@ -78,9 +77,9 @@ export async function PUT(
 
     return NextResponse.json({ project })
   } catch (error) {
-    console.error('Error PUT project:', error)
+    console.error('PUT project error:', error)
     return NextResponse.json(
-      { error: 'Error to maj project' },
+      { error: 'Error updating project' },
       { status: 500 }
     )
   }
@@ -97,9 +96,9 @@ export async function DELETE(
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Erreur DELETE project:', error)
+    console.error('DELETE project error:', error)
     return NextResponse.json(
-      { error: 'Erreur lors de la suppression du projet' },
+      { error: 'Error deleting project' },
       { status: 500 }
     )
   }

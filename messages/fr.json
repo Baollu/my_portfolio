@@ -1,0 +1,126 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "about": "À propos",
+    "projects": "Projets",
+    "skills": "Compétences",
+    "contact": "Contact"
+  },
+  "home": {
+    "greeting": "Bonjour, je suis",
+    "role": "Développeur Full-Stack passionné",
+    "interests": "Cuisine · Sport · Code · Jeux Vidéo",
+    "viewProjects": "Voir mes projets",
+    "contactMe": "Me contacter"
+  },
+  "about": {
+    "title": "À propos de moi",
+    "loading": "Chargement..."
+  },
+  "projects": {
+    "title": "Mes Projets",
+    "subtitle": "Découvrez mes projets réalisés durant mon parcours",
+    "featured": "Projets en vedette",
+    "featuredBadge": "En vedette",
+    "all": "Tous",
+    "noProjects": "Aucun projet dans cette catégorie",
+    "categories": {
+      "1A": "1re année",
+      "2A": "2e année",
+      "3A": "3e année",
+      "EXTRA": "Hors programme",
+      "PERSONAL": "Personnel"
+    }
+  },
+  "skills": {
+    "title": "Mes Compétences",
+    "subtitle": "Technologies et compétences que je maîtrise",
+    "categories": {
+      "web": "Développement Web",
+      "devops": "DevOps",
+      "languages": "Langages & Outils",
+      "soft": "Soft Skills"
+    }
+  },
+  "contact": {
+    "title": "Contactez-moi",
+    "subtitle": "Vous avez une opportunité de stage, un projet freelance ou juste envie de discuter ?",
+    "subtitle2": "N'hésitez pas à me contacter !",
+    "form": {
+      "lastName": "Nom",
+      "firstName": "Prénom",
+      "email": "Email",
+      "phone": "Téléphone",
+      "subject": "Sujet",
+      "subjectPlaceholder": "Opportunité de stage / Projet freelance / Autre",
+      "message": "Message",
+      "messagePlaceholder": "Bonjour Boris, j'ai une opportunité...",
+      "submit": "Envoyer le message",
+      "sending": "Envoi en cours...",
+      "required": "requis"
+    },
+    "success": {
+      "title": "Message envoyé !",
+      "message": "Merci pour votre message. Je vous répondrai dans les plus brefs délais.",
+      "sendAnother": "Envoyer un autre message"
+    },
+    "error": "Une erreur est survenue. Veuillez réessayer.",
+    "privacy": "Vos informations ne seront utilisées que pour vous répondre."
+  },
+  "admin": {
+    "title": "CMS Admin",
+    "subtitle": "Gérez votre portfolio",
+    "backToSite": "← Retour au site",
+    "tabs": {
+      "dashboard": "Dashboard",
+      "projects": "Projets",
+      "skills": "Compétences",
+      "about": "À propos",
+      "contacts": "Messages"
+    },
+    "dashboard": {
+      "messages": "Messages",
+      "unread": "non lus",
+      "projects": "Projets",
+      "published": "publiés",
+      "skills": "Compétences",
+      "howToUse": "Comment utiliser le CMS ?",
+      "instructions": {
+        "projects": "Projets : Ajoutez, modifiez ou supprimez vos projets",
+        "skills": "Compétences : Gérez vos compétences et leur notation",
+        "about": "À propos : Modifiez le contenu de votre page À propos",
+        "messages": "Messages : Consultez les messages reçus via le formulaire"
+      },
+      "tip": "Astuce : Utilisez aussi",
+      "tipCommand": "pour gérer vos données visuellement"
+    },
+    "projectsManager": {
+      "title": "Gestion des projets",
+      "useStudio": "Utilisez",
+      "toAddEdit": "pour ajouter/modifier",
+      "draft": "Brouillon"
+    },
+    "skillsManager": {
+      "title": "Gestion des compétences"
+    },
+    "aboutManager": {
+      "title": "Contenu de la page \"À propos\"",
+      "edit": "Modifier",
+      "save": "Sauvegarder",
+      "cancel": "Annuler",
+      "titlePlaceholder": "Titre",
+      "contentPlaceholder": "Contenu"
+    },
+    "contactsViewer": {
+      "title": "Messages reçus",
+      "noMessages": "Aucun message",
+      "new": "Nouveau"
+    }
+  },
+  "footer": {
+    "rights": "© 2024 Boris CHENG - Tous droits réservés"
+  },
+  "common": {
+    "loading": "Chargement..."
+  }
+}

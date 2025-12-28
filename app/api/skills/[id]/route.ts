@@ -1,81 +1,86 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function GET(req: Request) {
+export async function GET(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   try {
-    const { searchParams } = new URL(req.url)
-    const category = searchParams.get('category')
-    const published = searchParams.get('published') !== 'false'
-
-    const skills = await prisma.skill.findMany({
-      where: {
-        ...(category && { category }),
-        ...(published && { published: true }),
-      },
-      orderBy: [
-        { category: 'asc' },
-        { order: 'asc' },
-        { title: 'asc' },
-      ],
+    const skill = await prisma.skill.findUnique({
+      where: { id: params.id }
     })
 
-    // Grouper par catégorie
-    const groupedSkills = skills.reduce((acc, skill) => {
-      if (!acc[skill.category]) {
-        acc[skill.category] = []
-      }
-      acc[skill.category].push(skill)
-      return acc
-    }, {} as Record<string, typeof skills>)
+    if (!skill) {
+      return NextResponse.json(
+        { error: 'Skill not found' },
+        { status: 404 }
+      )
+    }
 
-    return NextResponse.json({
-      skills,
-      groupedSkills,
-    })
+    return NextResponse.json({ skill })
   } catch (error) {
-    console.error('Error GET skills:', error)
+    console.error('GET skill error:', error)
     return NextResponse.json(
-      { error: 'Error to fetch skills' },
+      { error: 'Error fetching skill' },
       { status: 500 }
     )
   }
 }
 
-export async function POST(req: Request) {
+export async function PUT(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     const body = await req.json()
-    const { title, category, rating, icon, order } = body
+    const { title, category, icon, order, published } = body
 
-    // Validation
-    if (!title || !category) {
+    const existingSkill = await prisma.skill.findUnique({
+      where: { id: params.id },
+    })
+
+    if (!existingSkill) {
       return NextResponse.json(
-        { error: 'Title and category required' },
-        { status: 400 }
+        { error: 'Skill not found' },
+        { status: 404 }
       )
     }
 
-    if (rating !== undefined && (rating < 0 || rating > 5)) {
-      return NextResponse.json(
-        { error: 'Rating must be between 0 and 5' },
-        { status: 400 }
-      )
-    }
-
-    const skill = await prisma.skill.create({
+    const skill = await prisma.skill.update({
+      where: { id: params.id },
       data: {
-        title,
-        category,
-        rating: rating || 0,
-        icon: icon || null,
-        order: order || 0,
+        ...(title && { title }),
+        ...(category && { category }),
+        ...(icon !== undefined && { icon }),
+        ...(order !== undefined && { order }),
+        ...(published !== undefined && { published }),
       },
     })
 
-    return NextResponse.json({ skill }, { status: 201 })
+    return NextResponse.json({ skill })
   } catch (error) {
-    console.error('Error POST skill:', error)
+    console.error('PUT skill error:', error)
     return NextResponse.json(
-      { error: 'Error to create skills' },
+      { error: 'Error updating skill' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    await prisma.skill.delete({
+      where: { id: params.id },
+    })
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('DELETE skill error:', error)
+    return NextResponse.json(
+      { error: 'Error deleting skill' },
       { status: 500 }
     )
   }

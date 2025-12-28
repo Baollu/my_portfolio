@@ -1,27 +1,27 @@
 import { NextResponse } from 'next/server'
-import {prisma} from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 
 export async function GET(req: Request) {
   try {
-    const { searchParams} = new URL(req.url)
+    const { searchParams } = new URL(req.url)
     const published = searchParams.get('published') !== 'false'
 
     const sections = await prisma.aboutSection.findMany({
       where: {
-        ...(published && {published: true}),
+        ...(published && { published: true }),
       },
       orderBy: [
-        {order: 'asc'},
-        {createdAt: 'asc'},
+        { order: 'asc' },
+        { createdAt: 'asc' },
       ],
     })
 
-    return NextResponse.json({sections})
+    return NextResponse.json({ sections })
   } catch (error) {
-    console.error('Error GET about:', error)
+    console.error('GET about error:', error)
     return NextResponse.json(
-      {error: 'Error to fectch sections'},
-      {status: 500}
+      { error: 'Error fetching sections' },
+      { status: 500 }
     )
   }
 }
@@ -29,12 +29,12 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const {key, title, content, order } = body
+    const { key, title, content, order } = body
 
-    if (!key || !title || !content){
+    if (!key || !title || !content) {
       return NextResponse.json(
-        {error: 'Key, title and content required'},
-        {status: 400}
+        { error: 'Key, title and content are required' },
+        { status: 400 }
       )
     }
 
@@ -47,12 +47,12 @@ export async function POST(req: Request) {
       },
     })
 
-    return NextResponse.json({section}, {status: 201})
+    return NextResponse.json({ section }, { status: 201 })
   } catch (error) {
-    console.error("Error POST about:", error)
+    console.error('POST about error:', error)
     return NextResponse.json(
-      {error: "Error to create the section"},
-      {status: 500}
+      { error: 'Error creating section' },
+      { status: 500 }
     )
   }
 }

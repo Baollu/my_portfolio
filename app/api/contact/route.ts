@@ -4,57 +4,57 @@ import { prisma } from '@/lib/prisma'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-// POST: Recevoir un nouveau message de contact
+// POST: Receive a new contact message
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const { nom, prenom, email, tel, sujet, message } = body
+    const { firstName, lastName, email, phone, subject, message } = body
 
     // Validation
-    if (!nom || !prenom || !email || !message) {
+    if (!firstName || !lastName || !email || !message) {
       return NextResponse.json(
-        { error: 'Champs requis manquants' },
+        { error: 'Required fields missing' },
         { status: 400 }
       )
     }
 
-    // Validation email
+    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
       return NextResponse.json(
-        { error: 'Email invalide' },
+        { error: 'Invalid email' },
         { status: 400 }
       )
     }
 
-    // Sauvegarder dans la base de données
+    // Save to database
     const contact = await prisma.contact.create({
       data: {
-        nom,
-        prenom,
+        firstName,
+        lastName,
         email,
-        tel: tel || null,
-        sujet: sujet || null,
+        phone: phone || null,
+        subject: subject || null,
         message,
       },
     })
 
-    // Envoyer l'email
+    // Send email notification
     try {
       await resend.emails.send({
         from: 'Portfolio Contact <onboarding@resend.dev>',
-        to: process.env.CONTACT_EMAIL || 'cheng.boris@hotmail.com',
+        to: process.env.CONTACT_EMAIL || 'your@email.com',
         replyTo: email,
-        subject: sujet || `Nouveau message de ${nom} ${prenom}`,
+        subject: subject || `New message from ${firstName} ${lastName}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #e60012;">Nouveau message depuis votre portfolio</h2>
+            <h2 style="color: #e60012;">New message from your portfolio</h2>
             
             <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-              <p><strong>Nom:</strong> ${nom} ${prenom}</p>
+              <p><strong>Name:</strong> ${firstName} ${lastName}</p>
               <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-              ${tel ? `<p><strong>Téléphone:</strong> ${tel}</p>` : ''}
-              ${sujet ? `<p><strong>Sujet:</strong> ${sujet}</p>` : ''}
+              ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ''}
+              ${subject ? `<p><strong>Subject:</strong> ${subject}</p>` : ''}
             </div>
             
             <div style="background: #fff; padding: 20px; border-left: 4px solid #e60012; margin: 20px 0;">
@@ -63,47 +63,47 @@ export async function POST(req: Request) {
             </div>
             
             <div style="color: #666; font-size: 12px; margin-top: 20px;">
-              <p>Message reçu le ${new Date().toLocaleString('fr-FR')}</p>
+              <p>Received on ${new Date().toLocaleString()}</p>
               <p>ID: ${contact.id}</p>
             </div>
           </div>
         `,
         text: `
-Nouveau message depuis votre portfolio
+New message from your portfolio
 
-Nom: ${nom} ${prenom}
+Name: ${firstName} ${lastName}
 Email: ${email}
-${tel ? `Téléphone: ${tel}` : ''}
-${sujet ? `Sujet: ${sujet}` : ''}
+${phone ? `Phone: ${phone}` : ''}
+${subject ? `Subject: ${subject}` : ''}
 
 Message:
 ${message}
 
 ---
-Reçu le ${new Date().toLocaleString('fr-FR')}
+Received on ${new Date().toLocaleString()}
 ID: ${contact.id}
         `.trim(),
       })
     } catch (emailError) {
-      console.error('Erreur envoi email:', emailError)
-      // On continue même si l'email échoue (message sauvegardé en DB)
+      console.error('Email send error:', emailError)
+      // Continue even if email fails (message is saved in DB)
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Message envoyé avec succès',
+      message: 'Message sent successfully',
       id: contact.id,
     })
   } catch (error) {
-    console.error('Erreur API contact:', error)
+    console.error('Contact API error:', error)
     return NextResponse.json(
-      { error: 'Erreur lors de l\'envoi du message' },
+      { error: 'Error sending message' },
       { status: 500 }
     )
   }
 }
 
-// GET: Récupérer tous les messages (pour l'admin)
+// GET: Retrieve all messages (for admin)
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url)
@@ -129,9 +129,9 @@ export async function GET(req: Request) {
       total: contacts.length,
     })
   } catch (error) {
-    console.error('Erreur GET contacts:', error)
+    console.error('GET contacts error:', error)
     return NextResponse.json(
-      { error: 'Erreur lors de la récupération des messages' },
+      { error: 'Error fetching messages' },
       { status: 500 }
     )
   }

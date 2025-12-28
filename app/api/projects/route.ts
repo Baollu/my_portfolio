@@ -23,15 +23,15 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ projects })
   } catch (error) {
-    console.error('Erreur GET projects:', error)
+    console.error('GET projects error:', error)
     return NextResponse.json(
-      { error: 'Error to fetch project' },
+      { error: 'Error fetching projects' },
       { status: 500 }
     )
   }
 }
 
-// POST: Créer un nouveau projet
+// POST: Create a new project
 export async function POST(req: Request) {
   try {
     const body = await req.json()
@@ -51,12 +51,12 @@ export async function POST(req: Request) {
     // Validation
     if (!title || !description || !category) {
       return NextResponse.json(
-        { error: 'Title, description and catégories required' },
+        { error: 'Title, description and category are required' },
         { status: 400 }
       )
     }
 
-    // Générer un slug unique
+    // Generate unique slug
     const slug = title
       .toLowerCase()
       .normalize('NFD')
@@ -64,7 +64,7 @@ export async function POST(req: Request) {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '')
 
-    // Vérifier l'unicité du slug
+    // Check slug uniqueness
     let finalSlug = slug
     let counter = 1
     while (await prisma.project.findUnique({ where: { slug: finalSlug } })) {
@@ -90,9 +90,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ project }, { status: 201 })
   } catch (error) {
-    console.error('Error POST project:', error)
+    console.error('POST project error:', error)
     return NextResponse.json(
-      { error: 'Error to create project' },
+      { error: 'Error creating project' },
       { status: 500 }
     )
   }

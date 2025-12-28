@@ -3,9 +3,9 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log('Start seeding...')
+  console.log('Starting seeding...')
 
-  // Clear the db
+  // Clear the database
   await prisma.contact.deleteMany()
   await prisma.project.deleteMany()
   await prisma.skill.deleteMany()
@@ -13,40 +13,40 @@ async function main() {
   await prisma.skillCategory.deleteMany()
   await prisma.aboutSection.deleteMany()
 
-  // Project category
+  // Project categories
   const projectCategories = [
-    { key: '1A', label: '1re année', order: 1 },
-    { key: '2A', label: '2e année', order: 2 },
-    { key: '3A', label: '3e année', order: 3 },
-    { key: 'HORS', label: 'Hors programme', order: 4 },
-    { key: 'PERSO', label: 'Personnel', order: 5 },
+    { key: '1A', label: '1st Year', order: 1 },
+    { key: '2A', label: '2nd Year', order: 2 },
+    { key: '3A', label: '3rd Year', order: 3 },
+    { key: 'EXTRA', label: 'Extra-curricular', order: 4 },
+    { key: 'PERSONAL', label: 'Personal', order: 5 },
   ]
 
   for (const cat of projectCategories) {
     await prisma.projectCategory.create({ data: cat })
   }
-  console.log('Projects categories create')
+  console.log('Project categories created')
 
-  // skills categories
+  // Skill categories
   const skillCategories = [
-    { key: 'web', label: 'Developement Web', order: 1 },
+    { key: 'web', label: 'Web Development', order: 1 },
     { key: 'devops', label: 'DevOps', order: 2 },
-    { key: 'bases', label: 'Langages & Outils', order: 3 },
+    { key: 'languages', label: 'Languages & Tools', order: 3 },
     { key: 'soft', label: 'Soft Skills', order: 4 },
   ]
 
   for (const cat of skillCategories) {
     await prisma.skillCategory.create({ data: cat })
   }
-  console.log('Projects caterogies create')
+  console.log('Skill categories created')
 
-  // Projets
+  // Projects
   const projects = [
     {
       title: 'Popeys',
       slug: 'popeys',
-      description: 'Projet d\'apprentissage de Docker et Docker Compose pour la conteneurisation d\'applications.',
-      shortDesc: 'Apprentissage Docker et Docker Compose',
+      description: 'Docker and Docker Compose learning project for application containerization.',
+      shortDesc: 'Docker and Docker Compose learning',
       tags: ['Docker', 'DevOps'],
       category: '1A',
       order: 1,
@@ -55,8 +55,8 @@ async function main() {
     {
       title: 'Chocolatine',
       slug: 'chocolatine',
-      description: 'Mise en place d\'un pipeline CI/CD avec GitHub Actions pour automatiser les tests et déploiements.',
-      shortDesc: 'Pipeline CI/CD avec GitHub Actions',
+      description: 'CI/CD pipeline setup with GitHub Actions to automate tests and deployments.',
+      shortDesc: 'CI/CD pipeline with GitHub Actions',
       tags: ['GitHub Actions', 'CI/CD'],
       category: '1A',
       order: 2,
@@ -65,8 +65,8 @@ async function main() {
     {
       title: 'Epytodo',
       slug: 'epytodo',
-      description: 'Application web de gestion de tâches développée en JavaScript avec une API REST.',
-      shortDesc: 'Application TodoList en JavaScript',
+      description: 'Task management web application developed in JavaScript with a REST API.',
+      shortDesc: 'TodoList application in JavaScript',
       tags: ['JavaScript', 'Express', 'REST API'],
       category: '1A',
       order: 3,
@@ -75,8 +75,8 @@ async function main() {
     {
       title: 'My Navy',
       slug: 'my-navy',
-      description: 'Jeu de bataille navale en réseau développé en C avec communication socket entre deux joueurs.',
-      shortDesc: 'Bataille navale multijoueur en C',
+      description: 'Network battleship game developed in C with socket communication between two players.',
+      shortDesc: 'Multiplayer battleship in C',
       tags: ['C', 'Sockets', 'Network'],
       category: '1A',
       order: 4,
@@ -85,8 +85,8 @@ async function main() {
     {
       title: 'Arcade',
       slug: 'arcade',
-      description: 'Plateforme de jeux arcade modulaire avec système de plugins dynamiques en C++.',
-      shortDesc: 'Plateforme de jeux arcade modulaire',
+      description: 'Modular arcade games platform with dynamic plugin system in C++.',
+      shortDesc: 'Modular arcade games platform',
       tags: ['C++', 'Design Patterns', 'SDL'],
       category: '2A',
       order: 1,
@@ -95,8 +95,8 @@ async function main() {
     {
       title: 'Raytracer',
       slug: 'raytracer',
-      description: 'Moteur de rendu 3D par lancer de rayons implémenté en C++ pour générer des images photoréalistes.',
-      shortDesc: 'Moteur de rendu 3D',
+      description: '3D ray tracing rendering engine implemented in C++ to generate photorealistic images.',
+      shortDesc: '3D rendering engine',
       tags: ['C++', '3D', 'Rendering'],
       category: '2A',
       order: 2,
@@ -105,10 +105,10 @@ async function main() {
     {
       title: 'Portfolio',
       slug: 'portfolio',
-      description: 'Site portfolio personnel développé avec Next.js, TypeScript et Prisma pour la gestion de contenu.',
-      shortDesc: 'Portfolio personnel avec CMS intégré',
+      description: 'Personal portfolio website developed with Next.js, TypeScript and Prisma for content management.',
+      shortDesc: 'Personal portfolio with integrated CMS',
       tags: ['Next.js', 'TypeScript', 'Prisma', 'PostgreSQL'],
-      category: 'PERSO',
+      category: 'PERSONAL',
       order: 1,
       featured: true,
     },
@@ -117,73 +117,74 @@ async function main() {
   for (const project of projects) {
     await prisma.project.create({ data: project })
   }
-  console.log('Projets créés')
+  console.log('Projects created')
 
-  const skills = [
-    { title: 'HTML5', category: 'web', rating: 4, order: 1 },
-    { title: 'CSS3', category: 'web', rating: 4, order: 2 },
-    { title: 'JavaScript', category: 'web', rating: 4, order: 3 },
-    { title: 'TypeScript', category: 'web', rating: 4, order: 4 },
-    { title: 'React', category: 'web', rating: 3, order: 5 },
-    { title: 'Next.js', category: 'web', rating: 4, order: 6 },
-    { title: 'Express', category: 'web', rating: 4, order: 7 },
-    { title: 'Node.js', category: 'web', rating: 4, order: 8 },
+const skills = [
+  { title: 'HTML5', category: 'web', order: 1 },
+  { title: 'CSS3', category: 'web', order: 2 },
+  { title: 'JavaScript', category: 'web', order: 3 },
+  { title: 'TypeScript', category: 'web', order: 4 },
+  { title: 'React', category: 'web', order: 5 },
+  { title: 'Next.js', category: 'web', order: 6 },
+  { title: 'Express', category: 'web', order: 7 },
+  { title: 'Node.js', category: 'web', order: 8 },
 
-    { title: 'Docker', category: 'devops', rating: 4, order: 1 },
-    { title: 'Docker Compose', category: 'devops', rating: 4, order: 2 },
-    { title: 'GitHub Actions', category: 'devops', rating: 4, order: 3 },
-    { title: 'Jenkins', category: 'devops', rating: 3, order: 4 },
-    { title: 'Ansible', category: 'devops', rating: 3, order: 5 },
+  { title: 'Docker', category: 'devops', order: 1 },
+  { title: 'Docker Compose', category: 'devops', order: 2 },
+  { title: 'GitHub Actions', category: 'devops', order: 3 },
+  { title: 'Jenkins', category: 'devops', order: 4 },
+  { title: 'Ansible', category: 'devops', order: 5 },
 
-    { title: 'C', category: 'bases', rating: 5, order: 1 },
-    { title: 'C++', category: 'bases', rating: 5, order: 2 },
-    { title: 'Python', category: 'bases', rating: 3, order: 3 },
-    { title: 'Git', category: 'bases', rating: 4, order: 4 },
-    { title: 'GitHub', category: 'bases', rating: 4, order: 5 },
-    { title: 'PostgreSQL', category: 'bases', rating: 3, order: 6 },
-    { title: 'Prisma', category: 'bases', rating: 4, order: 7 },
+  { title: 'C', category: 'languages', order: 1 },
+  { title: 'C++', category: 'languages', order: 2 },
+  { title: 'Python', category: 'languages', order: 3 },
+  { title: 'Git', category: 'languages', order: 4 },
+  { title: 'GitHub', category: 'languages', order: 5 },
+  { title: 'PostgreSQL', category: 'languages', order: 6 },
+  { title: 'Prisma', category: 'languages', order: 7 },
 
-    { title: 'Travail d\'équipe', category: 'soft', rating: 5, order: 1 },
-    { title: 'Communication', category: 'soft', rating: 5, order: 2 },
-    { title: 'Adaptabilité', category: 'soft', rating: 5, order: 3 },
-    { title: 'Apprentissage continu', category: 'soft', rating: 5, order: 4 },
-    { title: 'Résolution de problèmes', category: 'soft', rating: 5, order: 5 },
-  ]
+  { title: 'Teamwork', category: 'soft', order: 1 },
+  { title: 'Communication', category: 'soft', order: 2 },
+  { title: 'Adaptability', category: 'soft', order: 3 },
+  { title: 'Continuous Learning', category: 'soft', order: 4 },
+  { title: 'Problem Solving', category: 'soft', order: 5 },
+]
 
   for (const skill of skills) {
     await prisma.skill.create({ data: skill })
   }
-  console.log('Skills create')
+  console.log('Skills created')
 
+  // About sections (will be displayed based on locale)
   const aboutSections = [
     {
       key: 'intro',
-      title: 'Mon histoire',
-      content: 'Je m\'appelle Boris CHENG et je suis passionné par plusieurs domaines : la cuisine, le sport, la programmation et les jeux vidéo.\n\nEnfant, je passais beaucoup de temps à regarder des émissions culinaires, ce qui m\'a naturellement orienté vers la gastronomie.',
+      title: 'My Story',
+      content: 'My name is Boris CHENG and I am passionate about several fields: cooking, sports, programming and video games.\n\nAs a child, I spent a lot of time watching cooking shows, which naturally led me towards gastronomy.',
       order: 1,
     },
     {
-      key: 'cuisine',
-      title: 'Parcours Cuisine',
-      content: 'J\'ai commencé par un bac professionnel cuisine, une formation où je me sentais comme chez moi. J\'aimais créer de nouveaux plats, expérimenter et apprendre de mes erreurs.\n\nMes stages m\'ont montré une autre réalité du métier, notamment dans la restauration étoilée où la pression est constante.',
+      key: 'cooking',
+      title: 'Cooking Journey',
+      content: 'I started with a professional cooking diploma, a training where I felt at home. I loved creating new dishes, experimenting and learning from my mistakes.\n\nMy internships showed me another reality of the profession, especially in starred restaurants where pressure is constant.',
       order: 2,
     },
     {
       key: 'sports',
-      title: 'Parcours Sport',
-      content: 'Après le bac, j\'ai rejoint une faculté de sport (STAPS à Paris) où j\'ai étudié pendant deux ans. J\'y ai rencontré des personnes formidables et vécu de très bons moments.\n\nPour moi, le sport incarne cette idée : échouer, apprendre et se relever.',
+      title: 'Sports Journey',
+      content: 'After high school, I joined a sports faculty (STAPS in Paris) where I studied for two years. I met wonderful people there and had great times.\n\nFor me, sports embody this idea: fail, learn and get back up.',
       order: 3,
     },
     {
       key: 'coding',
-      title: 'Parcours Coding',
-      content: 'J\'ai longtemps hésité avant d\'entrer à Epitech. C\'est mon frère, diplômé d\'Epitech, qui m\'a encouragé : "au pire, tente ta chance un an".\n\nJ\'ai alors décidé de me lancer dans la programmation. Les débuts ont été exigeants mais j\'ai découvert que j\'aimais coder.',
+      title: 'Coding Journey',
+      content: 'I hesitated for a long time before entering Epitech. It was my brother, an Epitech graduate, who encouraged me: "at worst, give it a try for a year".\n\nI then decided to dive into programming. The beginnings were demanding but I discovered that I loved coding.',
       order: 4,
     },
     {
-      key: 'objectif',
-      title: 'Mon objectif',
-      content: 'Grâce à mon parcours à Epitech, j\'ai eu l\'opportunité de découvrir de nombreux domaines dans la tech.\n\nMon objectif est de continuer à apprendre et à me perfectionner dans trois axes : le développement web, le DevOps et l\'intelligence artificielle.\n\nÀ terme, mon ambition est de me lancer en freelance.',
+      key: 'goal',
+      title: 'My Goal',
+      content: 'Thanks to my journey at Epitech, I had the opportunity to discover many areas in tech.\n\nMy goal is to continue learning and improving in three areas: web development, DevOps and artificial intelligence.\n\nUltimately, my ambition is to start freelancing.',
       order: 5,
     },
   ]
@@ -191,14 +192,14 @@ async function main() {
   for (const section of aboutSections) {
     await prisma.aboutSection.create({ data: section })
   }
-  console.log('Sections About créées')
+  console.log('About sections created')
 
-  console.log('Seeding terminé avec succès!')
+  console.log('Seeding completed successfully!')
 }
 
 main()
   .catch((e) => {
-    console.error('Erreur lors du seeding:', e)
+    console.error('Error during seeding:', e)
     process.exit(1)
   })
   .finally(async () => {

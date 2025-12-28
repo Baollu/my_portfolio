@@ -1,7 +1,10 @@
-"use client"
+'use client'
 
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import Navigation from '@/components/Navigation'
+import Footer from '@/components/Footer'
+import Loading from '@/components/Loading'
 
 type Project = {
   id: string
@@ -17,15 +20,10 @@ type Project = {
   featured: boolean
 }
 
-const categoryLabels: Record<string, string> = {
-  '1A': '1re année',
-  '2A': '2e année',
-  '3A': '3e année',
-  'HORS': 'Hors programme',
-  'PERSO': 'Personnel',
-}
+const categoryKeys = ['1A', '2A', '3A', 'EXTRA', 'PERSONAL'] as const
 
 export default function ProjectsPage() {
+  const t = useTranslations('projects')
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
@@ -51,33 +49,19 @@ export default function ProjectsPage() {
 
   return (
     <main className="min-h-screen bg-black">
-      {/* Navigation */}
-      <nav className="border-b border-zinc-800 bg-black/50 backdrop-blur">
-        <div className="mx-auto max-w-7xl px-4 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-red-500">Boris CHENG</h1>
-            <div className="flex gap-6">
-              <Link href="/" className="hover:text-red-500">Accueil</Link>
-              <Link href="/about" className="hover:text-red-500">À propos</Link>
-              <Link href="/projects" className="text-red-500">Projets</Link>
-              <Link href="/skills" className="hover:text-red-500">Compétences</Link>
-              <Link href="/contact" className="hover:text-red-500">Contact</Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navigation />
 
       {/* Content */}
       <div className="mx-auto max-w-7xl px-4 py-16">
-        <h1 className="text-5xl font-bold text-white mb-4">Mes Projets</h1>
+        <h1 className="text-5xl font-bold text-white mb-4">{t('title')}</h1>
         <p className="text-zinc-400 text-lg mb-12">
-          Découvrez mes projets réalisés durant mon parcours
+          {t('subtitle')}
         </p>
 
         {/* Featured Projects */}
         {featuredProjects.length > 0 && !selectedCategory && (
           <div className="mb-16">
-            <h2 className="text-2xl font-bold text-red-500 mb-6">⭐ Projets en vedette</h2>
+            <h2 className="text-2xl font-bold text-red-500 mb-6">⭐ {t('featured')}</h2>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {featuredProjects.map((project) => (
                 <ProjectCard key={project.id} project={project} />
@@ -96,9 +80,9 @@ export default function ProjectsPage() {
                 : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
             }`}
           >
-            Tous
+            {t('all')}
           </button>
-          {Object.entries(categoryLabels).map(([key, label]) => (
+          {categoryKeys.map((key) => (
             <button
               key={key}
               onClick={() => setSelectedCategory(key)}
@@ -108,16 +92,14 @@ export default function ProjectsPage() {
                   : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
               }`}
             >
-              {label}
+              {t(`categories.${key}`)}
             </button>
           ))}
         </div>
 
         {/* Projects Grid */}
         {loading ? (
-          <div className="flex justify-center py-12">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-red-500 border-t-transparent"></div>
-          </div>
+          <Loading />
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredProjects.map((project) => (
@@ -128,27 +110,24 @@ export default function ProjectsPage() {
 
         {filteredProjects.length === 0 && !loading && (
           <p className="text-center text-zinc-500 py-12">
-            Aucun projet dans cette catégorie
+            {t('noProjects')}
           </p>
         )}
       </div>
 
-      {/* Footer */}
-      <footer className="border-t border-zinc-800 py-8">
-        <div className="mx-auto max-w-7xl px-4 text-center text-sm text-zinc-500">
-          <p>© 2024 Boris CHENG - Tous droits réservés</p>
-        </div>
-      </footer>
+      <Footer />
     </main>
   )
 }
 
 function ProjectCard({ project }: { project: Project }) {
+  const t = useTranslations('projects')
+
   return (
     <div className="group rounded-xl border border-zinc-800 bg-zinc-900/40 p-6 transition hover:border-red-500/50">
       {project.featured && (
         <span className="inline-block rounded bg-yellow-500/20 px-2 py-1 text-xs text-yellow-500 mb-3">
-          ⭐ En vedette
+          ⭐ {t('featuredBadge')}
         </span>
       )}
       
@@ -193,7 +172,7 @@ function ProjectCard({ project }: { project: Project }) {
       </div>
 
       <div className="mt-4 pt-4 border-t border-zinc-800">
-        <span className="text-xs text-zinc-500">{categoryLabels[project.category]}</span>
+        <span className="text-xs text-zinc-500">{t(`categories.${project.category}`)}</span>
       </div>
     </div>
   )

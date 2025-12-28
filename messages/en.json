@@ -1,0 +1,126 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "projects": "Projects",
+    "skills": "Skills",
+    "contact": "Contact"
+  },
+  "home": {
+    "greeting": "Hello, I'm",
+    "role": "Passionate Full-Stack Developer",
+    "interests": "Cooking · Sports · Code · Video Games",
+    "viewProjects": "View my projects",
+    "contactMe": "Contact me"
+  },
+  "about": {
+    "title": "About Me",
+    "loading": "Loading..."
+  },
+  "projects": {
+    "title": "My Projects",
+    "subtitle": "Discover my projects completed during my journey",
+    "featured": "Featured Projects",
+    "featuredBadge": "Featured",
+    "all": "All",
+    "noProjects": "No projects in this category",
+    "categories": {
+      "1A": "1st Year",
+      "2A": "2nd Year",
+      "3A": "3rd Year",
+      "EXTRA": "Extra-curricular",
+      "PERSONAL": "Personal"
+    }
+  },
+  "skills": {
+    "title": "My Skills",
+    "subtitle": "Technologies and skills I master",
+    "categories": {
+      "web": "Web Development",
+      "devops": "DevOps",
+      "languages": "Languages & Tools",
+      "soft": "Soft Skills"
+    }
+  },
+  "contact": {
+    "title": "Contact Me",
+    "subtitle": "Do you have an internship opportunity, a freelance project or just want to chat?",
+    "subtitle2": "Don't hesitate to contact me!",
+    "form": {
+      "lastName": "Last Name",
+      "firstName": "First Name",
+      "email": "Email",
+      "phone": "Phone",
+      "subject": "Subject",
+      "subjectPlaceholder": "Internship opportunity / Freelance project / Other",
+      "message": "Message",
+      "messagePlaceholder": "Hello Boris, I have an opportunity...",
+      "submit": "Send message",
+      "sending": "Sending...",
+      "required": "required"
+    },
+    "success": {
+      "title": "Message sent!",
+      "message": "Thank you for your message. I will respond as soon as possible.",
+      "sendAnother": "Send another message"
+    },
+    "error": "An error occurred. Please try again.",
+    "privacy": "Your information will only be used to respond to you."
+  },
+  "admin": {
+    "title": "CMS Admin",
+    "subtitle": "Manage your portfolio",
+    "backToSite": "← Back to site",
+    "tabs": {
+      "dashboard": "Dashboard",
+      "projects": "Projects",
+      "skills": "Skills",
+      "about": "About",
+      "contacts": "Messages"
+    },
+    "dashboard": {
+      "messages": "Messages",
+      "unread": "unread",
+      "projects": "Projects",
+      "published": "published",
+      "skills": "Skills",
+      "howToUse": "How to use the CMS?",
+      "instructions": {
+        "projects": "Projects: Add, edit or delete your projects",
+        "skills": "Skills: Manage your skills and their ratings",
+        "about": "About: Edit the content of your About page",
+        "messages": "Messages: View messages received via the form"
+      },
+      "tip": "Tip: Also use",
+      "tipCommand": "to manage your data visually"
+    },
+    "projectsManager": {
+      "title": "Project Management",
+      "useStudio": "Use",
+      "toAddEdit": "to add/edit",
+      "draft": "Draft"
+    },
+    "skillsManager": {
+      "title": "Skills Management"
+    },
+    "aboutManager": {
+      "title": "About Page Content",
+      "edit": "Edit",
+      "save": "Save",
+      "cancel": "Cancel",
+      "titlePlaceholder": "Title",
+      "contentPlaceholder": "Content"
+    },
+    "contactsViewer": {
+      "title": "Received Messages",
+      "noMessages": "No messages",
+      "new": "New"
+    }
+  },
+  "footer": {
+    "rights": "© 2024 Boris CHENG - All rights reserved"
+  },
+  "common": {
+    "loading": "Loading..."
+  }
+}

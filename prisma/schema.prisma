@@ -7,17 +7,18 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-// contact message
 model Contact {
     id        String   @id @default(cuid())
+    firstName String   @map("first_name")
+    lastName  String   @map("last_name")
     email     String
-    phone     String
+    phone     String?
     subject   String?
     message   String   @db.Text
     read      Boolean  @default(false)
     archived  Boolean  @default(false)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
 
     @@index([read])
     @@index([createdAt])
@@ -29,16 +30,17 @@ model Project {
     title       String
     slug        String   @unique
     description String   @db.Text
-    shortDesc   String?
+    shortDesc   String?  @map("short_desc")
     tags        String[]
-    category    String // 1st year, perso ...
-    imageUrl    String?
-    githubUrl   String?
+    category    String
+    imageUrl    String?  @map("image_url")
+    githubUrl   String?  @map("github_url")
+    liveUrl     String?  @map("live_url")
     featured    Boolean  @default(false)
     order       Int      @default(0)
     published   Boolean  @default(true)
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+    createdAt   DateTime @default(now()) @map("created_at")
+    updatedAt   DateTime @updatedAt @map("updated_at")
 
     @@index([category, published])
     @@index([featured])
@@ -50,11 +52,12 @@ model Skill {
     title     String
     category  String
     icon      String?
-    rating    Int      @default(0)
     order     Int      @default(0)
     published Boolean  @default(true)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map("skills")
 }
 
 model ProjectCategory {
@@ -82,8 +85,8 @@ model AboutSection {
     content   String   @db.Text
     order     Int      @default(0)
     published Boolean  @default(true)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
 
     @@map("about_sections")
 }
