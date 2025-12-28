@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useTranslations } from 'next-intl'
-import { useLocale } from 'next-intl'
+import { useRouter } from 'next/navigation'
+import { useTranslations, useLocale } from 'next-intl'
 
 type Contact = {
   id: string
@@ -33,19 +33,21 @@ type Skill = {
   id: string
   title: string
   category: string
-  rating: number
   published: boolean
 }
 
 type AboutSection = {
   id: string
+  key: string
   title: string
   content: string
+  order: number
 }
 
 export default function AdminCMS() {
   const t = useTranslations('admin')
   const locale = useLocale()
+  const router = useRouter()
   const [tab, setTab] = useState<'dashboard' | 'projects' | 'skills' | 'about' | 'contacts'>('dashboard')
   const [contacts, setContacts] = useState<Contact[]>([])
   const [projects, setProjects] = useState<Project[]>([])
@@ -62,8 +64,10 @@ export default function AdminCMS() {
     try {
       if (tab === 'dashboard' || tab === 'contacts') {
         const res = await fetch('/api/contact')
-        const data = await res.json()
-        setContacts(data.contacts || [])
+        if (res.ok) {
+          const data = await res.json()
+          setContacts(data.contacts || [])
+        }
       }
       
       if (tab === 'dashboard' || tab === 'projects') {
@@ -79,7 +83,7 @@ export default function AdminCMS() {
       }
 
       if (tab === 'about') {
-        const res = await fetch('/api/about')
+        const res = await fetch('/api/about?published=false')
         const data = await res.json()
         setAboutSections(data.sections || [])
       }
@@ -88,6 +92,12 @@ export default function AdminCMS() {
     } finally {
       setLoading(false)
     }
+  }
+
+  async function handleLogout() {
+    await fetch('/api/auth/logout', { method: 'POST' })
+    router.push(`/${locale}`)
+    router.refresh()
   }
 
   return (
@@ -99,13 +109,21 @@ export default function AdminCMS() {
             <h1 className="text-4xl font-bold text-red-500">{t('title')}</h1>
             <p className="mt-2 text-zinc-400">{t('subtitle')}</p>
           </div>
-          <a href={`/${locale}`} className="rounded-lg bg-zinc-800 px-4 py-2 hover:bg-zinc-700">
-            {t('backToSite')}
-          </a>
+          <div className="flex gap-3">
+            <a href={`/${locale}`} className="rounded-lg bg-zinc-800 px-4 py-2 hover:bg-zinc-700">
+              {t('backToSite')}
+            </a>
+            <button
+              onClick={handleLogout}
+              className="rounded-lg border border-red-500 px-4 py-2 text-red-500 hover:bg-red-500 hover:text-white transition"
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
         {/* Tabs */}
-        <div className="mb-8 flex gap-2 border-b border-zinc-800">
+        <div className="mb-8 flex gap-2 border-b border-zinc-800 overflow-x-auto">
           <Tab active={tab === 'dashboard'} onClick={() => setTab('dashboard')}>
             {t('tabs.dashboard')}
           </Tab>
@@ -134,7 +152,7 @@ export default function AdminCMS() {
             {tab === 'projects' && <ProjectsManager projects={projects} onRefresh={loadData} />}
             {tab === 'skills' && <SkillsManager skills={skills} onRefresh={loadData} />}
             {tab === 'about' && <AboutManager sections={aboutSections} onRefresh={loadData} />}
-            {tab === 'contacts' && <ContactsViewer contacts={contacts} />}
+            {tab === 'contacts' && <ContactsViewer contacts={contacts} onRefresh={loadData} />}
           </>
         )}
       </div>
@@ -146,7 +164,7 @@ function Tab({ active, onClick, children }: { active: boolean; onClick: () => vo
   return (
     <button
       onClick={onClick}
-      className={`px-6 py-3 font-medium border-b-2 transition ${
+      className={`px-6 py-3 font-medium border-b-2 transition whitespace-nowrap ${
         active ? 'border-red-500 text-white' : 'border-transparent text-zinc-400 hover:text-white'
       }`}
     >
@@ -162,7 +180,6 @@ function Dashboard({ contacts, projects, skills }: { contacts: Contact[]; projec
 
   return (
     <div className="space-y-6">
-      {/* Stats */}
       <div className="grid gap-6 md:grid-cols-3">
         <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6">
           <h3 className="text-sm text-zinc-400">{t('messages')}</h3>
@@ -179,63 +196,253 @@ function Dashboard({ contacts, projects, skills }: { contacts: Contact[]; projec
           <p className="text-3xl font-bold mt-2">{skills.length}</p>
         </div>
       </div>
-
-      {/* Info */}
-      <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6">
-        <h3 className="text-lg font-semibold mb-4">{t('howToUse')}</h3>
-        <ul className="space-y-2 text-zinc-300">
-          <li>• <strong>{t('instructions.projects')}</strong></li>
-          <li>• <strong>{t('instructions.skills')}</strong></li>
-          <li>• <strong>{t('instructions.about')}</strong></li>
-          <li>• <strong>{t('instructions.messages')}</strong></li>
-        </ul>
-        <p className="mt-4 text-sm text-zinc-500">
-          💡 {t('tip')} <code className="rounded bg-zinc-800 px-2 py-1">npm run db:studio</code> {t('tipCommand')}
-        </p>
-      </div>
     </div>
   )
 }
 
 function ProjectsManager({ projects, onRefresh }: { projects: Project[]; onRefresh: () => void }) {
-  const t = useTranslations('admin.projectsManager')
-  const tProjects = useTranslations('projects')
+  const [showForm, setShowForm] = useState(false)
+  const [editing, setEditing] = useState<Project | null>(null)
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    shortDesc: '',
+    tags: '',
+    category: '1A',
+    githubUrl: '',
+    liveUrl: '',
+    featured: false,
+    published: true,
+  })
+
+  function resetForm() {
+    setFormData({
+      title: '',
+      description: '',
+      shortDesc: '',
+      tags: '',
+      category: '1A',
+      githubUrl: '',
+      liveUrl: '',
+      featured: false,
+      published: true,
+    })
+    setEditing(null)
+    setShowForm(false)
+  }
+
+  function startEdit(project: Project) {
+    setFormData({
+      title: project.title,
+      description: project.description,
+      shortDesc: project.shortDesc || '',
+      tags: project.tags.join(', '),
+      category: project.category,
+      githubUrl: project.githubUrl || '',
+      liveUrl: project.liveUrl || '',
+      featured: project.featured,
+      published: project.published,
+    })
+    setEditing(project)
+    setShowForm(true)
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    
+    const payload = {
+      ...formData,
+      tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
+    }
+
+    try {
+      const url = editing ? `/api/projects/${editing.id}` : '/api/projects'
+      const method = editing ? 'PUT' : 'POST'
+      
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+
+      if (res.ok) {
+        resetForm()
+        onRefresh()
+      }
+    } catch (error) {
+      console.error('Error:', error)
+    }
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm('Are you sure you want to delete this project?')) return
+    
+    try {
+      const res = await fetch(`/api/projects/${id}`, { method: 'DELETE' })
+      if (res.ok) onRefresh()
+    } catch (error) {
+      console.error('Error:', error)
+    }
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">{t('title')}</h2>
-        <p className="text-sm text-zinc-500">
-          {t('useStudio')} <code className="rounded bg-zinc-800 px-2 py-1">npm run db:studio</code> {t('toAddEdit')}
-        </p>
+        <h2 className="text-2xl font-bold">Project Management</h2>
+        <button
+          onClick={() => setShowForm(true)}
+          className="rounded-lg bg-red-600 px-4 py-2 hover:bg-red-500"
+        >
+          + Add Project
+        </button>
       </div>
+
+      {showForm && (
+        <form onSubmit={handleSubmit} className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6 space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="block text-sm text-zinc-400 mb-1">Title *</label>
+              <input
+                type="text"
+                required
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-zinc-400 mb-1">Category *</label>
+              <select
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2"
+              >
+                <option value="1A">1st Year</option>
+                <option value="2A">2nd Year</option>
+                <option value="3A">3rd Year</option>
+                <option value="EXTRA">Extra-curricular</option>
+                <option value="PERSONAL">Personal</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm text-zinc-400 mb-1">Short Description</label>
+            <input
+              type="text"
+              value={formData.shortDesc}
+              onChange={(e) => setFormData({ ...formData, shortDesc: e.target.value })}
+              className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-zinc-400 mb-1">Description *</label>
+            <textarea
+              required
+              rows={4}
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-zinc-400 mb-1">Tags (comma separated)</label>
+            <input
+              type="text"
+              value={formData.tags}
+              onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+              placeholder="React, TypeScript, Prisma"
+              className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2"
+            />
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="block text-sm text-zinc-400 mb-1">GitHub URL</label>
+              <input
+                type="url"
+                value={formData.githubUrl}
+                onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-zinc-400 mb-1">Live URL</label>
+              <input
+                type="url"
+                value={formData.liveUrl}
+                onChange={(e) => setFormData({ ...formData, liveUrl: e.target.value })}
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-6">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={formData.featured}
+                onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                className="rounded"
+              />
+              <span className="text-sm">Featured</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={formData.published}
+                onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
+                className="rounded"
+              />
+              <span className="text-sm">Published</span>
+            </label>
+          </div>
+
+          <div className="flex gap-3">
+            <button type="submit" className="rounded-lg bg-red-600 px-6 py-2 hover:bg-red-500">
+              {editing ? 'Update' : 'Create'}
+            </button>
+            <button type="button" onClick={resetForm} className="rounded-lg bg-zinc-800 px-6 py-2 hover:bg-zinc-700">
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {projects.map((project) => (
           <div key={project.id} className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4">
-            {project.featured && (
-              <span className="inline-block rounded bg-yellow-500/20 px-2 py-1 text-xs text-yellow-500 mb-2">
-                ⭐ {tProjects('featuredBadge')}
-              </span>
-            )}
-            <h3 className="font-semibold text-lg">{project.title}</h3>
-            <p className="mt-2 text-sm text-zinc-400 line-clamp-2">
+            <div className="flex justify-between items-start mb-2">
+              <h3 className="font-semibold text-lg">{project.title}</h3>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => startEdit(project)}
+                  className="rounded bg-zinc-800 px-2 py-1 text-xs hover:bg-zinc-700"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(project.id)}
+                  className="rounded bg-red-500/20 px-2 py-1 text-xs text-red-400 hover:bg-red-500/30"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+            <p className="text-sm text-zinc-400 line-clamp-2 mb-3">
               {project.shortDesc || project.description}
             </p>
-            <div className="mt-3 flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1 mb-3">
               {project.tags.slice(0, 3).map((tag) => (
-                <span key={tag} className="rounded bg-zinc-800 px-2 py-0.5 text-xs">
-                  {tag}
-                </span>
+                <span key={tag} className="rounded bg-zinc-800 px-2 py-0.5 text-xs">{tag}</span>
               ))}
             </div>
-            <div className="mt-4 flex gap-2 text-xs">
-              <span className="rounded bg-red-500/20 px-2 py-1 text-red-400">
-                {tProjects(`categories.${project.category}`)}
-              </span>
-              {!project.published && (
-                <span className="rounded bg-orange-500/20 px-2 py-1 text-orange-400">{t('draft')}</span>
-              )}
+            <div className="flex gap-2 text-xs">
+              <span className="rounded bg-red-500/20 px-2 py-1 text-red-400">{project.category}</span>
+              {project.featured && <span className="rounded bg-yellow-500/20 px-2 py-1 text-yellow-400">Featured</span>}
+              {!project.published && <span className="rounded bg-orange-500/20 px-2 py-1 text-orange-400">Draft</span>}
             </div>
           </div>
         ))}
@@ -245,45 +452,159 @@ function ProjectsManager({ projects, onRefresh }: { projects: Project[]; onRefre
 }
 
 function SkillsManager({ skills, onRefresh }: { skills: Skill[]; onRefresh: () => void }) {
-  const t = useTranslations('admin.skillsManager')
-  const tProjects = useTranslations('admin.projectsManager')
-  const tSkills = useTranslations('skills')
-  
+  const [showForm, setShowForm] = useState(false)
+  const [editing, setEditing] = useState<Skill | null>(null)
+  const [formData, setFormData] = useState({
+    title: '',
+    category: 'web',
+    published: true,
+  })
+
+  function resetForm() {
+    setFormData({ title: '', category: 'web', published: true })
+    setEditing(null)
+    setShowForm(false)
+  }
+
+  function startEdit(skill: Skill) {
+    setFormData({
+      title: skill.title,
+      category: skill.category,
+      published: skill.published,
+    })
+    setEditing(skill)
+    setShowForm(true)
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    
+    try {
+      const url = editing ? `/api/skills/${editing.id}` : '/api/skills'
+      const method = editing ? 'PUT' : 'POST'
+      
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+
+      if (res.ok) {
+        resetForm()
+        onRefresh()
+      }
+    } catch (error) {
+      console.error('Error:', error)
+    }
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm('Are you sure you want to delete this skill?')) return
+    
+    try {
+      const res = await fetch(`/api/skills/${id}`, { method: 'DELETE' })
+      if (res.ok) onRefresh()
+    } catch (error) {
+      console.error('Error:', error)
+    }
+  }
+
   const grouped = skills.reduce((acc, skill) => {
     if (!acc[skill.category]) acc[skill.category] = []
     acc[skill.category].push(skill)
     return acc
   }, {} as Record<string, Skill[]>)
 
+  const categoryLabels: Record<string, string> = {
+    web: 'Web Development',
+    devops: 'DevOps',
+    languages: 'Languages & Tools',
+    soft: 'Soft Skills',
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">{t('title')}</h2>
-        <p className="text-sm text-zinc-500">
-          {tProjects('useStudio')} <code className="rounded bg-zinc-800 px-2 py-1">npm run db:studio</code> {tProjects('toAddEdit')}
-        </p>
+        <h2 className="text-2xl font-bold">Skills Management</h2>
+        <button
+          onClick={() => setShowForm(true)}
+          className="rounded-lg bg-red-600 px-4 py-2 hover:bg-red-500"
+        >
+          + Add Skill
+        </button>
       </div>
+
+      {showForm && (
+        <form onSubmit={handleSubmit} className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6 space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="block text-sm text-zinc-400 mb-1">Title *</label>
+              <input
+                type="text"
+                required
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-zinc-400 mb-1">Category *</label>
+              <select
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2"
+              >
+                <option value="web">Web Development</option>
+                <option value="devops">DevOps</option>
+                <option value="languages">Languages & Tools</option>
+                <option value="soft">Soft Skills</option>
+              </select>
+            </div>
+          </div>
+
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={formData.published}
+              onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
+              className="rounded"
+            />
+            <span className="text-sm">Published</span>
+          </label>
+
+          <div className="flex gap-3">
+            <button type="submit" className="rounded-lg bg-red-600 px-6 py-2 hover:bg-red-500">
+              {editing ? 'Update' : 'Create'}
+            </button>
+            <button type="button" onClick={resetForm} className="rounded-lg bg-zinc-800 px-6 py-2 hover:bg-zinc-700">
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
 
       {Object.entries(grouped).map(([category, categorySkills]) => (
         <div key={category}>
-          <h3 className="text-xl font-semibold mb-3">{tSkills(`categories.${category}`)}</h3>
-          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          <h3 className="text-xl font-semibold mb-3">{categoryLabels[category] || category}</h3>
+          <div className="flex flex-wrap gap-2">
             {categorySkills.map((skill) => (
-              <div key={skill.id} className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium">{skill.title}</span>
-                  <span className="text-sm text-zinc-500">{skill.rating}/5</span>
-                </div>
-                <div className="flex gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <div
-                      key={i}
-                      className={`h-2 w-2 rounded-full ${
-                        i < skill.rating ? 'bg-red-500' : 'bg-zinc-700'
-                      }`}
-                    />
-                  ))}
-                </div>
+              <div
+                key={skill.id}
+                className="group flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900/60 px-3 py-2"
+              >
+                <span>{skill.title}</span>
+                <button
+                  onClick={() => startEdit(skill)}
+                  className="opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-white transition"
+                >
+                  ✎
+                </button>
+                <button
+                  onClick={() => handleDelete(skill.id)}
+                  className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition"
+                >
+                  ×
+                </button>
               </div>
             ))}
           </div>
@@ -294,96 +615,181 @@ function SkillsManager({ skills, onRefresh }: { skills: Skill[]; onRefresh: () =
 }
 
 function AboutManager({ sections, onRefresh }: { sections: AboutSection[]; onRefresh: () => void }) {
-  const t = useTranslations('admin.aboutManager')
-  const [editing, setEditing] = useState<string | null>(null)
-  const [formData, setFormData] = useState({ title: '', content: '' })
+  const [showForm, setShowForm] = useState(false)
+  const [editing, setEditing] = useState<AboutSection | null>(null)
+  const [formData, setFormData] = useState({
+    key: '',
+    title: '',
+    content: '',
+    order: 0,
+  })
 
-  async function handleSave(id: string) {
+  function resetForm() {
+    setFormData({ key: '', title: '', content: '', order: 0 })
+    setEditing(null)
+    setShowForm(false)
+  }
+
+  function startEdit(section: AboutSection) {
+    setFormData({
+      key: section.key,
+      title: section.title,
+      content: section.content,
+      order: section.order,
+    })
+    setEditing(section)
+    setShowForm(true)
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    
     try {
-      const res = await fetch(`/api/about/${id}`, {
-        method: 'PUT',
+      const url = editing ? `/api/about/${editing.id}` : '/api/about'
+      const method = editing ? 'PUT' : 'POST'
+      
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       })
 
       if (res.ok) {
-        setEditing(null)
+        resetForm()
         onRefresh()
       }
-    } catch {
-      alert('Error saving')
+    } catch (error) {
+      console.error('Error:', error)
+    }
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm('Are you sure you want to delete this section?')) return
+    
+    try {
+      const res = await fetch(`/api/about/${id}`, { method: 'DELETE' })
+      if (res.ok) onRefresh()
+    } catch (error) {
+      console.error('Error:', error)
     }
   }
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">{t('title')}</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">About Page Content</h2>
+        <button
+          onClick={() => setShowForm(true)}
+          className="rounded-lg bg-red-600 px-4 py-2 hover:bg-red-500"
+        >
+          + Add Section
+        </button>
+      </div>
+
+      {showForm && (
+        <form onSubmit={handleSubmit} className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6 space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="block text-sm text-zinc-400 mb-1">Key * (unique identifier)</label>
+              <input
+                type="text"
+                required
+                disabled={!!editing}
+                value={formData.key}
+                onChange={(e) => setFormData({ ...formData, key: e.target.value })}
+                placeholder="intro, skills, experience..."
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2 disabled:opacity-50"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-zinc-400 mb-1">Order</label>
+              <input
+                type="number"
+                value={formData.order}
+                onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm text-zinc-400 mb-1">Title *</label>
+            <input
+              type="text"
+              required
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-zinc-400 mb-1">Content *</label>
+            <textarea
+              required
+              rows={8}
+              value={formData.content}
+              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+              className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2"
+            />
+          </div>
+
+          <div className="flex gap-3">
+            <button type="submit" className="rounded-lg bg-red-600 px-6 py-2 hover:bg-red-500">
+              {editing ? 'Update' : 'Create'}
+            </button>
+            <button type="button" onClick={resetForm} className="rounded-lg bg-zinc-800 px-6 py-2 hover:bg-zinc-700">
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
 
       {sections.map((section) => (
         <div key={section.id} className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6">
-          {editing === section.id ? (
-            <div className="space-y-4">
-              <input
-                type="text"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2"
-                placeholder={t('titlePlaceholder')}
-              />
-              <textarea
-                value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                rows={10}
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2"
-                placeholder={t('contentPlaceholder')}
-              />
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleSave(section.id)}
-                  className="rounded bg-red-600 px-4 py-2 hover:bg-red-500"
-                >
-                  {t('save')}
-                </button>
-                <button
-                  onClick={() => setEditing(null)}
-                  className="rounded bg-zinc-800 px-4 py-2 hover:bg-zinc-700"
-                >
-                  {t('cancel')}
-                </button>
-              </div>
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <h3 className="text-xl font-semibold">{section.title}</h3>
+              <span className="text-xs text-zinc-500">Key: {section.key} | Order: {section.order}</span>
             </div>
-          ) : (
-            <>
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="text-xl font-semibold">{section.title}</h3>
-                <button
-                  onClick={() => {
-                    setEditing(section.id)
-                    setFormData({ title: section.title, content: section.content })
-                  }}
-                  className="rounded bg-zinc-800 px-3 py-1.5 text-sm hover:bg-zinc-700"
-                >
-                  {t('edit')}
-                </button>
-              </div>
-              <p className="whitespace-pre-wrap text-zinc-300">{section.content}</p>
-            </>
-          )}
+            <div className="flex gap-2">
+              <button
+                onClick={() => startEdit(section)}
+                className="rounded bg-zinc-800 px-3 py-1.5 text-sm hover:bg-zinc-700"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDelete(section.id)}
+                className="rounded bg-red-500/20 px-3 py-1.5 text-sm text-red-400 hover:bg-red-500/30"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+          <p className="whitespace-pre-wrap text-zinc-300">{section.content}</p>
         </div>
       ))}
     </div>
   )
 }
 
-function ContactsViewer({ contacts }: { contacts: Contact[] }) {
-  const t = useTranslations('admin.contactsViewer')
+function ContactsViewer({ contacts, onRefresh }: { contacts: Contact[]; onRefresh: () => void }) {
+  async function markAsRead(id: string) {
+    console.log('Mark as read:', id)
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm('Are you sure you want to delete this message?')) return
+    console.log('Delete:', id)
+  }
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold">{t('title')}</h2>
+      <h2 className="text-2xl font-bold">Received Messages</h2>
 
       {contacts.length === 0 ? (
-        <p className="text-center text-zinc-500 py-12">{t('noMessages')}</p>
+        <p className="text-center text-zinc-500 py-12">No messages</p>
       ) : (
         contacts.map((contact) => (
           <div
@@ -398,17 +804,17 @@ function ContactsViewer({ contacts }: { contacts: Contact[] }) {
               <div>
                 <div className="flex items-center gap-3">
                   <h3 className="text-lg font-semibold">
-                    {contact.lastName} {contact.firstName}
+                    {contact.firstName} {contact.lastName}
                   </h3>
                   {!contact.read && (
                     <span className="rounded-full bg-red-500 px-2 py-0.5 text-xs text-white">
-                      {t('new')}
+                      New
                     </span>
                   )}
                 </div>
                 <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-zinc-400">
-                  <span>{contact.email}</span>
-                  {contact.phone && <span>📞 {contact.phone}</span>}
+                  <a href={`mailto:${contact.email}`} className="hover:text-red-500">{contact.email}</a>
+                  {contact.phone && <span>{contact.phone}</span>}
                   {contact.subject && <span>{contact.subject}</span>}
                 </div>
               </div>

@@ -3,13 +3,21 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
+import { useEffect, useState } from 'react'
 
 export default function Navigation() {
   const t = useTranslations('nav')
   const locale = useLocale()
   const pathname = usePathname()
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-  // Get the path without locale prefix
+  useEffect(() => {
+    fetch('/api/auth/check')
+      .then(res => res.json())
+      .then(data => setIsAuthenticated(data.authenticated))
+      .catch(() => setIsAuthenticated(false))
+  }, [pathname])
+
   const getPathWithoutLocale = () => {
     const segments = pathname.split('/')
     if (segments[1] === 'en' || segments[1] === 'fr') {
@@ -93,6 +101,18 @@ export default function Navigation() {
                 FR
               </button>
             </div>
+
+            {/* Login / Dashboard */}
+            <Link
+              href={`/${locale}${isAuthenticated ? '/admin' : '/login'}`}
+              className={`ml-2 rounded-lg px-4 py-2 text-sm font-medium transition ${
+                isAuthenticated
+                  ? 'bg-red-600 text-white hover:bg-red-500'
+                  : 'border border-zinc-700 hover:border-red-500 hover:text-red-500'
+              }`}
+            >
+              {isAuthenticated ? t('dashboard') : t('login')}
+            </Link>
           </div>
         </div>
       </div>

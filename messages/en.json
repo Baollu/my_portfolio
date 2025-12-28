@@ -4,8 +4,20 @@
     "about": "About",
     "projects": "Projects",
     "skills": "Skills",
-    "contact": "Contact"
+    "contact": "Contact",
+    "login": "Login",
+    "dashboard": "Dashboard"
   },
+
+  "login": {
+    "title": "Login",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Sign in",
+    "error": "Invalid username or password",
+    "loading": "Signing in..."
+  },
+
   "home": {
     "greeting": "Hello, I'm",
     "role": "Passionate Full-Stack Developer",

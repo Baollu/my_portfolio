@@ -4,8 +4,20 @@
     "about": "À propos",
     "projects": "Projets",
     "skills": "Compétences",
-    "contact": "Contact"
+    "contact": "Contact",
+    "login": "Connexion",
+    "dashboard": "Dashboard"
   },
+
+  "login": {
+    "title": "Connexion",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "error": "Nom d'utilisateur ou mot de passe invalide",
+    "loading": "Connexion..."
+  },
+
   "home": {
     "greeting": "Bonjour, je suis",
     "role": "Développeur Full-Stack passionné",
