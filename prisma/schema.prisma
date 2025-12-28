@@ -1,0 +1,89 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// contact message
+model Contact {
+    id        String   @id @default(cuid())
+    email     String
+    phone     String
+    subject   String?
+    message   String   @db.Text
+    read      Boolean  @default(false)
+    archived  Boolean  @default(false)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([read])
+    @@index([createdAt])
+    @@map("contacts")
+}
+
+model Project {
+    id          String   @id @default(cuid())
+    title       String
+    slug        String   @unique
+    description String   @db.Text
+    shortDesc   String?
+    tags        String[]
+    category    String // 1st year, perso ...
+    imageUrl    String?
+    githubUrl   String?
+    featured    Boolean  @default(false)
+    order       Int      @default(0)
+    published   Boolean  @default(true)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@index([category, published])
+    @@index([featured])
+    @@map("projects")
+}
+
+model Skill {
+    id        String   @id @default(cuid())
+    title     String
+    category  String
+    icon      String?
+    rating    Int      @default(0)
+    order     Int      @default(0)
+    published Boolean  @default(true)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model ProjectCategory {
+    id    String @id @default(cuid())
+    key   String @unique
+    label String
+    order Int    @default(0)
+
+    @@map("project_categories")
+}
+
+model SkillCategory {
+    id    String @id @default(cuid())
+    key   String @unique
+    label String
+    order Int    @default(0)
+
+    @@map("skill_categories")
+}
+
+model AboutSection {
+    id        String   @id @default(cuid())
+    key       String   @unique
+    title     String
+    content   String   @db.Text
+    order     Int      @default(0)
+    published Boolean  @default(true)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("about_sections")
+}
