@@ -74,7 +74,7 @@
     },
     "success": {
       "title": "Message sent!",
-      "message": "Thank you for your message. I will respond as soon as possible.",
+      "message": "Thank you for your message. A response will be sent to you as soon as possible.",
       "sendAnother": "Send another message"
     },
     "error": "An error occurred. Please try again.",

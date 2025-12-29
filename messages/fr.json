@@ -74,7 +74,7 @@
     },
     "success": {
       "title": "Message envoyé !",
-      "message": "Merci pour votre message. Je vous répondrai dans les plus brefs délais.",
+      "message": "Merci pour votre message. une reponse vous sera adresse dans les plus brefs délais.",
       "sendAnother": "Envoyer un autre message"
     },
     "error": "Une erreur est survenue. Veuillez réessayer.",
