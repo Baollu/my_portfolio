@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import Loading from '@/components/Loading'
+import { useSearchParams } from 'next/navigation'
 
 type Project = {
   id: string
@@ -27,6 +28,9 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const searchParams = useSearchParams()
+  const selectedId = searchParams.get('selected')
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
 
   useEffect(() => {
     fetch('/api/projects')

@@ -4,7 +4,6 @@ import { prisma } from '@/lib/prisma'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-// POST: Receive a new contact message
 export async function POST(req: Request) {
   try {
     const body = await req.json()
@@ -18,7 +17,6 @@ export async function POST(req: Request) {
       )
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
       return NextResponse.json(
@@ -27,7 +25,6 @@ export async function POST(req: Request) {
       )
     }
 
-    // Save to database
     const contact = await prisma.contact.create({
       data: {
         firstName,
@@ -39,12 +36,11 @@ export async function POST(req: Request) {
       },
     })
 
-    // Send email notification
     try {
       await resend.emails.send({
         from: 'Portfolio Contact <onboarding@resend.dev>',
         to: process.env.CONTACT_EMAIL || 'your@email.com',
-        replyTo: email,
+        reply_to: email,
         subject: subject || `New message from ${firstName} ${lastName}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -86,7 +82,6 @@ ID: ${contact.id}
       })
     } catch (emailError) {
       console.error('Email send error:', emailError)
-      // Continue even if email fails (message is saved in DB)
     }
 
     return NextResponse.json({
@@ -103,7 +98,6 @@ ID: ${contact.id}
   }
 }
 
-// GET: Retrieve all messages (for admin)
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url)

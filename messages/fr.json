@@ -47,6 +47,7 @@
   "skills": {
     "title": "Mes Compétences",
     "subtitle": "Technologies et compétences que je maîtrise",
+    "usedIn": "Utilisé dans :",
     "categories": {
       "web": "Développement Web",
       "devops": "DevOps",

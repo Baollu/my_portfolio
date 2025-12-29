@@ -50,7 +50,6 @@ export default function ContactPage() {
     <main className="min-h-screen bg-black">
       <Navigation />
 
-      {/* Content */}
       <div className="mx-auto max-w-2xl px-4 py-16">
         <h1 className="text-5xl font-bold text-white mb-4">{t('title')}</h1>
         <p className="text-zinc-400 text-lg mb-2">
@@ -66,16 +65,9 @@ export default function ContactPage() {
             <p className="text-zinc-300">
               {t('success.message')}
             </p>
-            <button
-              onClick={() => setStatus('idle')}
-              className="mt-4 text-red-500 hover:underline"
-            >
-              {t('success.sendAnother')}
-            </button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Name fields */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-2">
@@ -87,7 +79,6 @@ export default function ContactPage() {
                   value={formData.lastName}
                   onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                   className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white focus:border-red-500 focus:outline-none"
-                  placeholder="Doe"
                 />
               </div>
               <div>
@@ -100,12 +91,10 @@ export default function ContactPage() {
                   value={formData.firstName}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                   className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white focus:border-red-500 focus:outline-none"
-                  placeholder="John"
                 />
               </div>
             </div>
 
-            {/* Email and Phone */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-2">
@@ -117,7 +106,6 @@ export default function ContactPage() {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white focus:border-red-500 focus:outline-none"
-                  placeholder="john@example.com"
                 />
               </div>
               <div>
@@ -129,12 +117,10 @@ export default function ContactPage() {
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white focus:border-red-500 focus:outline-none"
-                  placeholder="+1 234 567 890"
                 />
               </div>
             </div>
 
-            {/* Subject */}
             <div>
               <label className="block text-sm font-medium text-zinc-300 mb-2">
                 {t('form.subject')}
@@ -144,11 +130,9 @@ export default function ContactPage() {
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                 className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white focus:border-red-500 focus:outline-none"
-                placeholder={t('form.subjectPlaceholder')}
               />
             </div>
 
-            {/* Message */}
             <div>
               <label className="block text-sm font-medium text-zinc-300 mb-2">
                 {t('form.message')} *
@@ -159,18 +143,15 @@ export default function ContactPage() {
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white focus:border-red-500 focus:outline-none"
-                placeholder={t('form.messagePlaceholder')}
               />
             </div>
 
-            {/* Error */}
             {status === 'error' && (
               <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-4 text-red-400">
                 {t('error')}
               </div>
             )}
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={status === 'loading'}

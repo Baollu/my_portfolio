@@ -15,7 +15,14 @@ function isProtectedApiRoute(pathname: string, method: string): boolean {
     return false
   }
   
-  const writeProtectedRoutes = ['/api/projects', '/api/skills', '/api/about', '/api/contact']
+  const writeProtectedRoutes = [
+    '/api/projects',
+    '/api/skills',
+    '/api/about',
+    '/api/contact',
+    '/api/skill-categories',
+    '/api/project-categories'
+  ]
   return writeProtectedRoutes.some(route => pathname.startsWith(route))
 }
 

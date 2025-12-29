@@ -47,6 +47,7 @@
   "skills": {
     "title": "My Skills",
     "subtitle": "Technologies and skills I master",
+    "usedIn": "Used in:",
     "categories": {
       "web": "Web Development",
       "devops": "DevOps",
