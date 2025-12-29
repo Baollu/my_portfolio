@@ -35,7 +35,6 @@ export default function AboutPage() {
     <main className="min-h-screen bg-black">
       <Navigation />
 
-      {/* Content */}
       <div className="mx-auto max-w-4xl px-4 py-16">
         <h1 className="text-5xl font-bold text-white mb-12">{t('title')}</h1>
 
