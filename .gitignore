@@ -1,4 +1,4 @@
-# --- Dépendances ---
+# --- Dependencies ---
 node_modules/
 /.pnp
 .pnp.js
@@ -9,8 +9,7 @@ node_modules/
 build/
 dist/
 
-# --- Environnement & Sécurité (TRÈS IMPORTANT) ---
-# Ignore tous les fichiers .env qui contiennent tes secrets
+# --- Environment & Security (IMPORTANT) ---
 .env
 .env*.local
 .env.development
@@ -18,7 +17,6 @@ dist/
 .env.production
 
 # --- Prisma ---
-# Si un jour tu utilises SQLite en local (pas ton cas actuel avec Postgres, mais utile à laisser)
 /prisma/*.db
 /prisma/*.db-journal
 
@@ -28,7 +26,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# --- IDE & Système ---
+# --- IDE & System ---
 .idea/
 .vscode/
 *.swp
