@@ -32,28 +32,6 @@ export default function ContactPage() {
         throw new Error('Database save failed')
       }
 
-      // 2. Envoyer via EmailJS (côté client, pas de problème de domaine)
-      // Tu devras configurer EmailJS avec tes propres IDs
-      const emailjsEnabled = false // Mettre à true après configuration EmailJS
-
-      if (emailjsEnabled) {
-        const templateParams = {
-          from_name: `${formData.firstName} ${formData.lastName}`,
-          from_email: formData.email,
-          phone: formData.phone || 'Non renseigné',
-          subject: formData.subject || 'Contact depuis le portfolio',
-          message: formData.message,
-        }
-
-        // Décommenter après configuration EmailJS :
-        // await emailjs.send(
-        //   'YOUR_SERVICE_ID',    // Remplacer par ton Service ID
-        //   'YOUR_TEMPLATE_ID',   // Remplacer par ton Template ID
-        //   templateParams,
-        //   'YOUR_PUBLIC_KEY'     // Remplacer par ta Public Key
-        // )
-      }
-
       setStatus('success')
       setFormData({
         firstName: '',

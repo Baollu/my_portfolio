@@ -19,7 +19,6 @@ export async function GET(req: Request) {
       ],
     })
 
-    // Group by category
     const groupedSkills = skills.reduce((acc, skill) => {
       if (!acc[skill.category]) {
         acc[skill.category] = []
@@ -46,7 +45,6 @@ export async function POST(req: Request) {
     const body = await req.json()
     const { title, category, icon, order } = body
 
-    // Validation
     if (!title || !category) {
       return NextResponse.json(
         { error: 'Title and category are required' },

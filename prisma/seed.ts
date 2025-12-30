@@ -5,7 +5,6 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('Starting seeding...')
 
-  // Clear the database
   await prisma.contact.deleteMany()
   await prisma.project.deleteMany()
   await prisma.skill.deleteMany()
@@ -17,7 +16,6 @@ async function main() {
   await prisma.socialLink.deleteMany()
   await prisma.siteConfig.deleteMany()
 
-  // ========== SITE CONFIG ==========
   const siteConfigs = [
     { key: 'job_title', value: 'Ingénieur Logiciel' },
     { key: 'job_title_en', value: 'Software Engineer' },
@@ -34,7 +32,6 @@ async function main() {
   }
   console.log('Site config created')
 
-  // ========== SOCIAL LINKS (URLs correctes) ==========
   const socialLinks = [
     { platform: 'github', url: 'https://github.com/Baollu', order: 1 },
     { platform: 'linkedin', url: 'https://www.linkedin.com/in/boris-cheng-8010992a1/', order: 2 },
@@ -46,7 +43,6 @@ async function main() {
   }
   console.log('Social links created')
 
-  // ========== EXPERIENCES ==========
   const experiences = [
     {
       title: 'Développeur Full Stack',
@@ -80,7 +76,6 @@ async function main() {
   }
   console.log('Experiences created')
 
-  // ========== EDUCATION ==========
   const educations = [
     {
       title: 'Expert en Ingénierie Logicielle (Titre Niveau 7)',
@@ -107,7 +102,6 @@ async function main() {
   }
   console.log('Education created')
 
-  // ========== PROJECT CATEGORIES ==========
   const projectCategories = [
     { key: '1A', label: '1ère année', order: 1 },
     { key: '2A', label: '2ème année', order: 2 },
@@ -121,7 +115,6 @@ async function main() {
   }
   console.log('Project categories created')
 
-  // ========== SKILL CATEGORIES ==========
   const skillCategories = [
     { key: 'languages', label: 'Langages', order: 1 },
     { key: 'frameworks', label: 'Frameworks', order: 2 },
@@ -135,7 +128,6 @@ async function main() {
   }
   console.log('Skill categories created')
 
-  // ========== PROJECTS ==========
   const projects = [
     {
       title: 'R-Type',
@@ -248,9 +240,7 @@ Architecture Cross-Platform: Support complet Linux/Windows via CMake et gestionn
   }
   console.log('Projects created')
 
-  // ========== SKILLS (basés sur le CV exactement) ==========
   const skills = [
-    // Langages (comme sur le CV)
     { title: 'C', category: 'languages', order: 1 },
     { title: 'C++', category: 'languages', order: 2 },
     { title: 'Golang', category: 'languages', order: 3 },
@@ -258,23 +248,19 @@ Architecture Cross-Platform: Support complet Linux/Windows via CMake et gestionn
     { title: 'TypeScript', category: 'languages', order: 5 },
     { title: 'Flutter', category: 'languages', order: 6 },
 
-    // Frameworks (comme sur le CV)
     { title: 'Next.js', category: 'frameworks', order: 1 },
     { title: 'Vue.js', category: 'frameworks', order: 2 },
     { title: 'Node.js', category: 'frameworks', order: 3 },
 
-    // Bases de données (comme sur le CV)
     { title: 'PostgreSQL', category: 'database', order: 1 },
     { title: 'SQLite', category: 'database', order: 2 },
     { title: 'Redis', category: 'database', order: 3 },
 
-    // DevOps (comme sur le CV)
     { title: 'GitHub', category: 'devops', order: 1 },
     { title: 'Docker', category: 'devops', order: 2 },
     { title: 'GitHub Actions', category: 'devops', order: 3 },
     { title: 'Ansible', category: 'devops', order: 4 },
 
-    // Langues parlées
     { title: 'Anglais (B2)', category: 'spoken', order: 1 },
     { title: 'Chinois (B1)', category: 'spoken', order: 2 },
   ]
@@ -284,7 +270,6 @@ Architecture Cross-Platform: Support complet Linux/Windows via CMake et gestionn
   }
   console.log('Skills created')
 
-  // ========== ABOUT SECTIONS ==========
   const aboutSections = [
     {
       key: 'intro',

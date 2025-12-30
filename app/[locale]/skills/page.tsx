@@ -66,7 +66,6 @@ export default function SkillsPage() {
     )
   }
 
-  // Grouper les skills par catégorie
   const groupedSkills = skills.reduce((acc, skill) => {
     if (!acc[skill.category]) {
       acc[skill.category] = []
@@ -75,15 +74,12 @@ export default function SkillsPage() {
     return acc
   }, {} as Record<string, Skill[]>)
 
-  // Trier les skills dans chaque catégorie par ordre
   Object.keys(groupedSkills).forEach(category => {
     groupedSkills[category].sort((a, b) => a.order - b.order)
   })
 
-  // Trier les catégories par leur ordre
   const sortedCategories = [...categories].sort((a, b) => a.order - b.order)
 
-  // Créer un map des labels de catégories
   const categoryLabels = categories.reduce((acc, cat) => {
     acc[cat.key] = cat.label
     return acc

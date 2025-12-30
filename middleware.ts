@@ -15,11 +15,14 @@ function isProtectedApiRoute(pathname: string, method: string): boolean {
     return false
   }
   
+  if (method === 'POST' && pathname === '/api/contact') {
+    return false
+  }
+  
   const writeProtectedRoutes = [
     '/api/projects',
     '/api/skills',
     '/api/about',
-    '/api/contact',
     '/api/skill-categories',
     '/api/project-categories',
     '/api/experiences',

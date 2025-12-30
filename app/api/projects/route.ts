@@ -31,7 +31,6 @@ export async function GET(req: Request) {
   }
 }
 
-// POST: Create a new project
 export async function POST(req: Request) {
   try {
     const body = await req.json()
@@ -48,7 +47,6 @@ export async function POST(req: Request) {
       order,
     } = body
 
-    // Validation
     if (!title || !description || !category) {
       return NextResponse.json(
         { error: 'Title, description and category are required' },
@@ -56,7 +54,6 @@ export async function POST(req: Request) {
       )
     }
 
-    // Generate unique slug
     const slug = title
       .toLowerCase()
       .normalize('NFD')
@@ -64,7 +61,6 @@ export async function POST(req: Request) {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '')
 
-    // Check slug uniqueness
     let finalSlug = slug
     let counter = 1
     while (await prisma.project.findUnique({ where: { slug: finalSlug } })) {
