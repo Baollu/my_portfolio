@@ -4,7 +4,10 @@ const withNextIntl = createNextIntlPlugin('./i18n.ts')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Add any other Next.js config options here
+  // Force dynamic rendering for all pages
+  experimental: {
+    // This allows dynamic rendering with next-intl
+  },
 }
 
 module.exports = withNextIntl(nextConfig)

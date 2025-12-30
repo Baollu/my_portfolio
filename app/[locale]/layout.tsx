@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
-import { getMessages } from 'next-intl/server'
+import { getMessages, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { locales } from '@/i18n'
 import '../globals.css'
@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   title: 'Boris CHENG - Portfolio',
   description: 'Portfolio of Boris CHENG - Developer',
 }
+
+export const dynamic = 'force-dynamic'
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
@@ -24,6 +26,8 @@ export default async function LocaleLayout({
   if (!locales.includes(locale as any)) {
     notFound()
   }
+
+  setRequestLocale(locale)
 
   const messages = await getMessages()
 
