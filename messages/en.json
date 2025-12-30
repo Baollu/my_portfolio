@@ -2,6 +2,7 @@
   "nav": {
     "home": "Home",
     "about": "About",
+    "experience": "Experience",
     "projects": "Projects",
     "skills": "Skills",
     "contact": "Contact",
@@ -20,15 +21,43 @@
 
   "home": {
     "greeting": "Hello, I'm",
-    "role": "Passionate Full-Stack Developer",
-    "interests": "Cooking · Sports · Code · Video Games",
+    "role": "Full-Stack Developer",
+    "lookingFor": "Looking for internship April - July 2026",
+    "tagline": "Passionate about software development, from cooking to code",
     "viewProjects": "View my projects",
-    "contactMe": "Contact me"
+    "contactMe": "Contact me",
+    "downloadCV": "Download CV",
+    "techStack": "Main technologies",
+    "stats": {
+      "internships": "Internships completed",
+      "projects": "Projects",
+      "languages": "Languages spoken",
+      "graduation": "Epitech degree"
+    }
   },
+
   "about": {
     "title": "About Me",
     "loading": "Loading..."
   },
+
+  "experience": {
+    "title": "My Journey",
+    "subtitle": "Professional experience and education",
+    "tabs": {
+      "experience": "Experience",
+      "education": "Education"
+    },
+    "types": {
+      "internship": "Internship",
+      "fulltime": "Full-time",
+      "freelance": "Freelance"
+    },
+    "present": "Present",
+    "noExperience": "No experience",
+    "noEducation": "No education"
+  },
+
   "projects": {
     "title": "My Projects",
     "subtitle": "Discover my projects completed during my journey",
@@ -44,17 +73,20 @@
       "PERSONAL": "Personal"
     }
   },
+
   "skills": {
     "title": "My Skills",
     "subtitle": "Technologies and skills I master",
     "usedIn": "Used in:",
     "categories": {
-      "web": "Web Development",
-      "devops": "DevOps",
-      "languages": "Languages & Tools",
-      "soft": "Soft Skills"
+      "languages": "Languages",
+      "frameworks": "Frameworks",
+      "database": "Databases",
+      "devops": "Tools & DevOps",
+      "spoken": "Languages"
     }
   },
+
   "contact": {
     "title": "Contact Me",
     "subtitle": "Do you have an internship opportunity, a freelance project or just want to chat?",
@@ -80,6 +112,7 @@
     "error": "An error occurred. Please try again.",
     "privacy": "Your information will only be used to respond to you."
   },
+
   "admin": {
     "title": "CMS Admin",
     "subtitle": "Manage your portfolio",
@@ -88,6 +121,7 @@
       "dashboard": "Dashboard",
       "projects": "Projects",
       "skills": "Skills",
+      "experience": "Experience",
       "about": "About",
       "contacts": "Messages"
     },
@@ -130,9 +164,13 @@
       "new": "New"
     }
   },
+
   "footer": {
-    "rights": "© 2024 Boris CHENG - All rights reserved"
+    "rights": "© 2024 Boris CHENG - All rights reserved",
+    "madeWith": "Made with",
+    "and": "and"
   },
+
   "common": {
     "loading": "Loading..."
   }

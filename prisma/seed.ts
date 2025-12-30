@@ -12,14 +12,108 @@ async function main() {
   await prisma.projectCategory.deleteMany()
   await prisma.skillCategory.deleteMany()
   await prisma.aboutSection.deleteMany()
+  await prisma.experience.deleteMany()
+  await prisma.education.deleteMany()
+  await prisma.socialLink.deleteMany()
+  await prisma.siteConfig.deleteMany()
 
-  // Project categories
+  // ========== SITE CONFIG ==========
+  const siteConfigs = [
+    { key: 'job_title', value: 'Ingénieur Logiciel' },
+    { key: 'job_title_en', value: 'Software Engineer' },
+    { key: 'looking_for', value: 'Stage de 4 mois (Avril - Juillet 2026)' },
+    { key: 'looking_for_en', value: '4-month internship (April - July 2026)' },
+    { key: 'location', value: 'Paris, France' },
+    { key: 'email', value: 'cheng.boris@hotmail.com' },
+    { key: 'phone', value: '07 88 58 60 61' },
+    { key: 'website', value: 'borischeng.fr' },
+  ]
+
+  for (const config of siteConfigs) {
+    await prisma.siteConfig.create({ data: config })
+  }
+  console.log('Site config created')
+
+  // ========== SOCIAL LINKS (URLs correctes) ==========
+  const socialLinks = [
+    { platform: 'github', url: 'https://github.com/Baollu', order: 1 },
+    { platform: 'linkedin', url: 'https://www.linkedin.com/in/boris-cheng-8010992a1/', order: 2 },
+    { platform: 'email', url: 'mailto:cheng.boris@hotmail.com', order: 3 },
+  ]
+
+  for (const link of socialLinks) {
+    await prisma.socialLink.create({ data: link })
+  }
+  console.log('Social links created')
+
+  // ========== EXPERIENCES ==========
+  const experiences = [
+    {
+      title: 'Développeur Full Stack',
+      company: 'Davensi',
+      location: 'Paris',
+      type: 'stage',
+      startDate: new Date('2025-10-01'),
+      endDate: new Date('2026-03-31'),
+      description: `• Conception de services backend en Go pour l'interconnexion avec des API externes
+• Mise en place des tests unitaires en Go
+• Maintenance et développement des interfaces web en VueJs et mobile en React Native`,
+      skills: ['Go', 'Vue.js', 'React Native', 'API REST', 'Tests unitaires'],
+      order: 1,
+    },
+    {
+      title: 'Développeur Full Stack',
+      company: 'Une Robe Un Soir',
+      location: 'Paris',
+      type: 'stage',
+      startDate: new Date('2024-08-01'),
+      endDate: new Date('2024-11-30'),
+      description: `• Développement d'outils internes en Node.js pour l'automatisation des flux logistiques (préparation des commandes du jour) et la génération des rapports KPI
+• Maintenance et ajout de nouvelles fonctionnalités sur le site web de l'entreprise en NodeJS`,
+      skills: ['Node.js', 'JavaScript', 'Automatisation', 'KPI'],
+      order: 2,
+    },
+  ]
+
+  for (const exp of experiences) {
+    await prisma.experience.create({ data: exp })
+  }
+  console.log('Experiences created')
+
+  // ========== EDUCATION ==========
+  const educations = [
+    {
+      title: 'Expert en Ingénierie Logicielle (Titre Niveau 7)',
+      school: 'Epitech Paris',
+      location: 'Paris',
+      startDate: new Date('2023-09-01'),
+      endDate: new Date('2028-06-30'),
+      description: 'Formation en informatique axée sur la pratique et les projets',
+      order: 1,
+    },
+    {
+      title: 'Bac Pro Cuisine',
+      school: 'Lycée Jean Drouant',
+      location: 'Paris',
+      startDate: new Date('2019-09-01'),
+      endDate: new Date('2021-06-30'),
+      description: null,
+      order: 2,
+    },
+  ]
+
+  for (const edu of educations) {
+    await prisma.education.create({ data: edu })
+  }
+  console.log('Education created')
+
+  // ========== PROJECT CATEGORIES ==========
   const projectCategories = [
-    { key: '1A', label: '1st Year', order: 1 },
-    { key: '2A', label: '2nd Year', order: 2 },
-    { key: '3A', label: '3rd Year', order: 3 },
-    { key: 'EXTRA', label: 'Extra-curricular', order: 4 },
-    { key: 'PERSONAL', label: 'Personal', order: 5 },
+    { key: '1A', label: '1ère année', order: 1 },
+    { key: '2A', label: '2ème année', order: 2 },
+    { key: '3A', label: '3ème année', order: 3 },
+    { key: 'EXTRA', label: 'Hors programme', order: 4 },
+    { key: 'PERSONAL', label: 'Personnel', order: 5 },
   ]
 
   for (const cat of projectCategories) {
@@ -27,12 +121,13 @@ async function main() {
   }
   console.log('Project categories created')
 
-  // Skill categories
+  // ========== SKILL CATEGORIES ==========
   const skillCategories = [
-    { key: 'web', label: 'Web Development', order: 1 },
-    { key: 'devops', label: 'DevOps', order: 2 },
-    { key: 'languages', label: 'Languages & Tools', order: 3 },
-    { key: 'soft', label: 'Soft Skills', order: 4 },
+    { key: 'languages', label: 'Langages', order: 1 },
+    { key: 'frameworks', label: 'Frameworks', order: 2 },
+    { key: 'database', label: 'Bases de données', order: 3 },
+    { key: 'devops', label: 'Outils & DevOps', order: 4 },
+    { key: 'spoken', label: 'Langues', order: 5 },
   ]
 
   for (const cat of skillCategories) {
@@ -40,77 +135,111 @@ async function main() {
   }
   console.log('Skill categories created')
 
-  // Projects
+  // ========== PROJECTS ==========
   const projects = [
     {
-      title: 'Popeys',
-      slug: 'popeys',
-      description: 'Docker and Docker Compose learning project for application containerization.',
-      shortDesc: 'Docker and Docker Compose learning',
-      tags: ['Docker', 'DevOps'],
-      category: '1A',
+      title: 'R-Type',
+      slug: 'r-type',
+      description: `Développement d'un moteur de jeu complet avec architecture ECS et gestion réseau multijoueur en C++.
+      
+Architecture Cross-Platform: Support complet Linux/Windows via CMake et gestionnaire de paquets.`,
+      shortDesc: 'Moteur de jeu ECS multijoueur en C++',
+      tags: ['C++', 'ECS', 'Network', 'CMake', 'Cross-Platform'],
+      category: '3A',
+      order: 1,
+      featured: true,
+    },
+    {
+      title: 'Robocar',
+      slug: 'robocar',
+      description: `Développement d'une voiture autonome contrôlée par capteurs (vitesse, distance).
+      
+• Implémentation d'une IA pour la détection de lignes et le suivi de trajectoire
+• Tests virtuels via le simulateur Webots (C / C++)
+• Construction mécanique : soudure, assemblage et intégration des composants électroniques`,
+      shortDesc: 'Voiture autonome avec IA embarquée',
+      tags: ['C', 'C++', 'IA', 'Webots', 'Électronique'],
+      category: '3A',
+      order: 2,
+      featured: true,
+    },
+    {
+      title: 'AREA',
+      slug: 'area',
+      description: `Développement d'une application web et mobile d'automatisation de tâches type Action-Réaction.
+      
+• Conception d'un moteur d'événements en Python gérant WebHooks, CronJobs et appels API externes
+• Implémentation native du protocole OAuth2 et gestion de l'authentification
+• Interfaces développées en Next.js et Flutter, avec une base de données PostgreSQL, le tout conteneurisé sous Docker`,
+      shortDesc: 'Plateforme d\'automatisation type IFTTT',
+      tags: ['Python', 'Next.js', 'Flutter', 'PostgreSQL', 'Docker', 'OAuth2'],
+      category: '3A',
+      order: 3,
+      featured: true,
+    },
+    {
+      title: 'Bot Trade',
+      slug: 'bot-trade',
+      description: `Trading Algorithmique avec système temps réel.
+      
+• Moteur de Trading Temps Réel : Conception d'un système à faible latence en Go, capable de traiter des flux financiers massifs
+• Architecture de Données : Implémentation d'un pipeline hybride alliant vitesse (Redis) et fiabilité (PostgreSQL)
+• Intelligence Artificielle : Intégration de modèles prédictifs (Python/ONNX) pour l'analyse automatisée des tendances de marché`,
+      shortDesc: 'Trading algorithmique temps réel en Go',
+      tags: ['Go', 'Redis', 'PostgreSQL', 'Python', 'ONNX', 'IA'],
+      category: '3A',
+      order: 4,
+      featured: true,
+    },
+    {
+      title: 'Arcade',
+      slug: 'arcade',
+      description: 'Plateforme de jeux arcade modulaire avec système de plugins dynamique en C++.',
+      shortDesc: 'Plateforme de jeux arcade modulaire',
+      tags: ['C++', 'Design Patterns', 'SDL', 'SFML'],
+      category: '2A',
       order: 1,
       featured: false,
     },
     {
-      title: 'Chocolatine',
-      slug: 'chocolatine',
-      description: 'CI/CD pipeline setup with GitHub Actions to automate tests and deployments.',
-      shortDesc: 'CI/CD pipeline with GitHub Actions',
-      tags: ['GitHub Actions', 'CI/CD'],
-      category: '1A',
+      title: 'Raytracer',
+      slug: 'raytracer',
+      description: 'Moteur de rendu 3D par ray tracing implémenté en C++ pour générer des images photoréalistes.',
+      shortDesc: 'Moteur de rendu 3D',
+      tags: ['C++', '3D', 'Rendering', 'Math'],
+      category: '2A',
       order: 2,
       featured: false,
     },
     {
       title: 'Epytodo',
       slug: 'epytodo',
-      description: 'Task management web application developed in JavaScript with a REST API.',
-      shortDesc: 'TodoList application in JavaScript',
-      tags: ['JavaScript', 'Express', 'REST API'],
+      description: 'Application web de gestion de tâches développée en JavaScript avec une API REST.',
+      shortDesc: 'Application TodoList en JavaScript',
+      tags: ['JavaScript', 'Express', 'REST API', 'MySQL'],
       category: '1A',
-      order: 3,
-      featured: true,
+      order: 1,
+      featured: false,
     },
     {
       title: 'My Navy',
       slug: 'my-navy',
-      description: 'Network battleship game developed in C with socket communication between two players.',
-      shortDesc: 'Multiplayer battleship in C',
+      description: 'Jeu de bataille navale en réseau développé en C avec communication par sockets entre deux joueurs.',
+      shortDesc: 'Bataille navale multijoueur en C',
       tags: ['C', 'Sockets', 'Network'],
       category: '1A',
-      order: 4,
-      featured: false,
-    },
-    {
-      title: 'Arcade',
-      slug: 'arcade',
-      description: 'Modular arcade games platform with dynamic plugin system in C++.',
-      shortDesc: 'Modular arcade games platform',
-      tags: ['C++', 'Design Patterns', 'SDL'],
-      category: '2A',
-      order: 1,
-      featured: true,
-    },
-    {
-      title: 'Raytracer',
-      slug: 'raytracer',
-      description: '3D ray tracing rendering engine implemented in C++ to generate photorealistic images.',
-      shortDesc: '3D rendering engine',
-      tags: ['C++', '3D', 'Rendering'],
-      category: '2A',
       order: 2,
-      featured: true,
+      featured: false,
     },
     {
       title: 'Portfolio',
       slug: 'portfolio',
-      description: 'Personal portfolio website developed with Next.js, TypeScript and Prisma for content management.',
-      shortDesc: 'Personal portfolio with integrated CMS',
-      tags: ['Next.js', 'TypeScript', 'Prisma', 'PostgreSQL'],
+      description: 'Site portfolio personnel développé avec Next.js, TypeScript et Prisma pour la gestion de contenu.',
+      shortDesc: 'Portfolio personnel avec CMS intégré',
+      tags: ['Next.js', 'TypeScript', 'Prisma', 'PostgreSQL', 'Tailwind'],
       category: 'PERSONAL',
       order: 1,
-      featured: true,
+      featured: false,
     },
   ]
 
@@ -119,72 +248,88 @@ async function main() {
   }
   console.log('Projects created')
 
-const skills = [
-  { title: 'HTML5', category: 'web', order: 1 },
-  { title: 'CSS3', category: 'web', order: 2 },
-  { title: 'JavaScript', category: 'web', order: 3 },
-  { title: 'TypeScript', category: 'web', order: 4 },
-  { title: 'React', category: 'web', order: 5 },
-  { title: 'Next.js', category: 'web', order: 6 },
-  { title: 'Express', category: 'web', order: 7 },
-  { title: 'Node.js', category: 'web', order: 8 },
+  // ========== SKILLS (basés sur le CV exactement) ==========
+  const skills = [
+    // Langages (comme sur le CV)
+    { title: 'C', category: 'languages', order: 1 },
+    { title: 'C++', category: 'languages', order: 2 },
+    { title: 'Golang', category: 'languages', order: 3 },
+    { title: 'Python', category: 'languages', order: 4 },
+    { title: 'TypeScript', category: 'languages', order: 5 },
+    { title: 'Flutter', category: 'languages', order: 6 },
 
-  { title: 'Docker', category: 'devops', order: 1 },
-  { title: 'Docker Compose', category: 'devops', order: 2 },
-  { title: 'GitHub Actions', category: 'devops', order: 3 },
-  { title: 'Jenkins', category: 'devops', order: 4 },
-  { title: 'Ansible', category: 'devops', order: 5 },
+    // Frameworks (comme sur le CV)
+    { title: 'Next.js', category: 'frameworks', order: 1 },
+    { title: 'Vue.js', category: 'frameworks', order: 2 },
+    { title: 'Node.js', category: 'frameworks', order: 3 },
 
-  { title: 'C', category: 'languages', order: 1 },
-  { title: 'C++', category: 'languages', order: 2 },
-  { title: 'Python', category: 'languages', order: 3 },
-  { title: 'Git', category: 'languages', order: 4 },
-  { title: 'GitHub', category: 'languages', order: 5 },
-  { title: 'PostgreSQL', category: 'languages', order: 6 },
-  { title: 'Prisma', category: 'languages', order: 7 },
+    // Bases de données (comme sur le CV)
+    { title: 'PostgreSQL', category: 'database', order: 1 },
+    { title: 'SQLite', category: 'database', order: 2 },
+    { title: 'Redis', category: 'database', order: 3 },
 
-  { title: 'Teamwork', category: 'soft', order: 1 },
-  { title: 'Communication', category: 'soft', order: 2 },
-  { title: 'Adaptability', category: 'soft', order: 3 },
-  { title: 'Continuous Learning', category: 'soft', order: 4 },
-  { title: 'Problem Solving', category: 'soft', order: 5 },
-]
+    // DevOps (comme sur le CV)
+    { title: 'GitHub', category: 'devops', order: 1 },
+    { title: 'Docker', category: 'devops', order: 2 },
+    { title: 'GitHub Actions', category: 'devops', order: 3 },
+    { title: 'Ansible', category: 'devops', order: 4 },
+
+    // Langues parlées
+    { title: 'Anglais (B2)', category: 'spoken', order: 1 },
+    { title: 'Chinois (B1)', category: 'spoken', order: 2 },
+  ]
 
   for (const skill of skills) {
     await prisma.skill.create({ data: skill })
   }
   console.log('Skills created')
 
-  // About sections (will be displayed based on locale)
+  // ========== ABOUT SECTIONS ==========
   const aboutSections = [
     {
       key: 'intro',
-      title: 'My Story',
-      content: 'My name is Boris CHENG and I am passionate about several fields: cooking, sports, programming and video games.\n\nAs a child, I spent a lot of time watching cooking shows, which naturally led me towards gastronomy.',
+      title: 'Qui suis-je ?',
+      content: `Je m'appelle Boris CHENG, étudiant en 3ème année à Epitech Paris. Passionné par le développement logiciel, je me spécialise dans le développement Full-Stack avec une appétence particulière pour les architectures backend robustes et les interfaces utilisateur modernes.
+
+Mon parcours atypique, de la cuisine au code, m'a appris l'importance de la rigueur, de la créativité et de la persévérance.`,
       order: 1,
     },
     {
-      key: 'cooking',
-      title: 'Cooking Journey',
-      content: 'I started with a professional cooking diploma, a training where I felt at home. I loved creating new dishes, experimenting and learning from my mistakes.\n\nMy internships showed me another reality of the profession, especially in starred restaurants where pressure is constant.',
+      key: 'journey',
+      title: 'Mon parcours',
+      content: `Après un Bac Pro Cuisine au Lycée Jean Drouant, j'ai découvert ma passion pour l'informatique et rejoint Epitech en 2023.
+
+Ce virage peut sembler surprenant, mais la cuisine et le code partagent beaucoup : la précision, la créativité, la gestion du stress et le travail en équipe. Ces compétences transférables m'ont permis de m'adapter rapidement à ce nouveau domaine.`,
       order: 2,
     },
     {
-      key: 'sports',
-      title: 'Sports Journey',
-      content: 'After high school, I joined a sports faculty (STAPS in Paris) where I studied for two years. I met wonderful people there and had great times.\n\nFor me, sports embody this idea: fail, learn and get back up.',
+      key: 'experience',
+      title: 'Expérience professionnelle',
+      content: `J'ai eu l'opportunité de réaliser deux stages significatifs :
+
+Chez Davensi (2025-2026), je développe des services backend en Go et des interfaces en Vue.js et React Native.
+
+Chez Une Robe Un Soir (2024), j'ai créé des outils d'automatisation en Node.js pour optimiser les flux logistiques.`,
       order: 3,
     },
     {
-      key: 'coding',
-      title: 'Coding Journey',
-      content: 'I hesitated for a long time before entering Epitech. It was my brother, an Epitech graduate, who encouraged me: "at worst, give it a try for a year".\n\nI then decided to dive into programming. The beginnings were demanding but I discovered that I loved coding.',
+      key: 'interests',
+      title: 'Centres d\'intérêt',
+      content: `🏐 Volley-ball : 2 ans de compétition en club et universitaire (STAPS), poste de Libéro/Passeur. Le sport m'a appris la discipline et l'esprit d'équipe.
+
+🍳 Cuisine : Ma première passion. Gastronomie mondiale et défis culinaires (création de recettes).
+
+✈️ Voyage : Curieux de découvrir le patrimoine historique et architectural du monde.
+
+🎮 Jeux vidéo : Passion qui m'a naturellement mené vers le développement.`,
       order: 4,
     },
     {
       key: 'goal',
-      title: 'My Goal',
-      content: 'Thanks to my journey at Epitech, I had the opportunity to discover many areas in tech.\n\nMy goal is to continue learning and improving in three areas: web development, DevOps and artificial intelligence.\n\nUltimately, my ambition is to start freelancing.',
+      title: 'Mon objectif',
+      content: `Je recherche un stage de 4 mois (Avril - Juillet 2026) à Paris pour continuer à développer mes compétences en développement Full-Stack.
+
+Mon ambition à long terme est de devenir un développeur polyvalent, maîtrisant aussi bien le backend que le frontend, avec des compétences solides en DevOps et une ouverture vers l'IA.`,
       order: 5,
     },
   ]
@@ -194,7 +339,7 @@ const skills = [
   }
   console.log('About sections created')
 
-  console.log('Seeding completed successfully!')
+  console.log('✅ Seeding completed successfully!')
 }
 
 main()

@@ -10,6 +10,7 @@ export default function Navigation() {
   const locale = useLocale()
   const pathname = usePathname()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     fetch('/api/auth/check')
@@ -38,6 +39,15 @@ export default function Navigation() {
     return currentPath.startsWith(path)
   }
 
+  const navLinks = [
+    { path: '/', label: t('home') },
+    { path: '/about', label: t('about') },
+    { path: '/experience', label: t('experience') },
+    { path: '/projects', label: t('projects') },
+    { path: '/skills', label: t('skills') },
+    { path: '/contact', label: t('contact') },
+  ]
+
   return (
     <nav className="border-b border-zinc-800 bg-black/50 backdrop-blur sticky top-0 z-50">
       <div className="mx-auto max-w-7xl px-4 py-4">
@@ -46,37 +56,17 @@ export default function Navigation() {
             Boris CHENG
           </Link>
           
-          <div className="flex items-center gap-6">
-            <Link 
-              href={`/${locale}`} 
-              className={isActive('/') ? 'text-red-500' : 'hover:text-red-500'}
-            >
-              {t('home')}
-            </Link>
-            <Link 
-              href={`/${locale}/about`} 
-              className={isActive('/about') ? 'text-red-500' : 'hover:text-red-500'}
-            >
-              {t('about')}
-            </Link>
-            <Link 
-              href={`/${locale}/projects`} 
-              className={isActive('/projects') ? 'text-red-500' : 'hover:text-red-500'}
-            >
-              {t('projects')}
-            </Link>
-            <Link 
-              href={`/${locale}/skills`} 
-              className={isActive('/skills') ? 'text-red-500' : 'hover:text-red-500'}
-            >
-              {t('skills')}
-            </Link>
-            <Link 
-              href={`/${locale}/contact`} 
-              className={isActive('/contact') ? 'text-red-500' : 'hover:text-red-500'}
-            >
-              {t('contact')}
-            </Link>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-6">
+            {navLinks.map((link) => (
+              <Link 
+                key={link.path}
+                href={`/${locale}${link.path === '/' ? '' : link.path}`}
+                className={`transition ${isActive(link.path) ? 'text-red-500' : 'hover:text-red-500'}`}
+              >
+                {link.label}
+              </Link>
+            ))}
 
             {/* Language Switcher */}
             <div className="flex items-center gap-1 ml-4 border-l border-zinc-700 pl-4">
@@ -114,7 +104,70 @@ export default function Navigation() {
               {isAuthenticated ? t('dashboard') : t('login')}
             </Link>
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden p-2 text-zinc-400 hover:text-white"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {mobileMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
         </div>
+
+        {/* Mobile Navigation */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-4 pb-4 border-t border-zinc-800 pt-4">
+            <div className="flex flex-col gap-4">
+              {navLinks.map((link) => (
+                <Link 
+                  key={link.path}
+                  href={`/${locale}${link.path === '/' ? '' : link.path}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`transition ${isActive(link.path) ? 'text-red-500' : 'hover:text-red-500'}`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+
+              <div className="flex items-center gap-2 pt-4 border-t border-zinc-800">
+                <button
+                  onClick={() => switchLocale('en')}
+                  className={`px-3 py-1.5 rounded text-sm ${
+                    locale === 'en' ? 'bg-red-600 text-white' : 'bg-zinc-800 text-zinc-400'
+                  }`}
+                >
+                  EN
+                </button>
+                <button
+                  onClick={() => switchLocale('fr')}
+                  className={`px-3 py-1.5 rounded text-sm ${
+                    locale === 'fr' ? 'bg-red-600 text-white' : 'bg-zinc-800 text-zinc-400'
+                  }`}
+                >
+                  FR
+                </button>
+              </div>
+
+              <Link
+                href={`/${locale}${isAuthenticated ? '/admin' : '/login'}`}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`rounded-lg px-4 py-2 text-sm font-medium text-center transition ${
+                  isAuthenticated
+                    ? 'bg-red-600 text-white'
+                    : 'border border-zinc-700'
+                }`}
+              >
+                {isAuthenticated ? t('dashboard') : t('login')}
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   )

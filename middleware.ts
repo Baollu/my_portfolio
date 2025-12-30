@@ -21,7 +21,10 @@ function isProtectedApiRoute(pathname: string, method: string): boolean {
     '/api/about',
     '/api/contact',
     '/api/skill-categories',
-    '/api/project-categories'
+    '/api/project-categories',
+    '/api/experiences',
+    '/api/educations',
+    '/api/socials',
   ]
   return writeProtectedRoutes.some(route => pathname.startsWith(route))
 }

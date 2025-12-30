@@ -2,6 +2,7 @@
   "nav": {
     "home": "Accueil",
     "about": "À propos",
+    "experience": "Parcours",
     "projects": "Projets",
     "skills": "Compétences",
     "contact": "Contact",
@@ -20,15 +21,43 @@
 
   "home": {
     "greeting": "Bonjour, je suis",
-    "role": "Développeur Full-Stack passionné",
-    "interests": "Cuisine · Sport · Code · Jeux Vidéo",
+    "role": "Développeur Full-Stack",
+    "lookingFor": "Recherche stage Avril - Juillet 2026",
+    "tagline": "Passionné par le développement logiciel, de la cuisine au code",
     "viewProjects": "Voir mes projets",
-    "contactMe": "Me contacter"
+    "contactMe": "Me contacter",
+    "downloadCV": "Télécharger CV",
+    "techStack": "Technologies principales",
+    "stats": {
+      "internships": "Stages réalisés",
+      "projects": "Projets",
+      "languages": "Langues parlées",
+      "graduation": "Diplôme Epitech"
+    }
   },
+
   "about": {
     "title": "À propos de moi",
     "loading": "Chargement..."
   },
+
+  "experience": {
+    "title": "Mon Parcours",
+    "subtitle": "Expériences professionnelles et formations",
+    "tabs": {
+      "experience": "Expériences",
+      "education": "Formation"
+    },
+    "types": {
+      "internship": "Stage",
+      "fulltime": "CDI",
+      "freelance": "Freelance"
+    },
+    "present": "Présent",
+    "noExperience": "Aucune expérience",
+    "noEducation": "Aucune formation"
+  },
+
   "projects": {
     "title": "Mes Projets",
     "subtitle": "Découvrez mes projets réalisés durant mon parcours",
@@ -37,24 +66,27 @@
     "all": "Tous",
     "noProjects": "Aucun projet dans cette catégorie",
     "categories": {
-      "1A": "1re année",
-      "2A": "2e année",
-      "3A": "3e année",
+      "1A": "1ère année",
+      "2A": "2ème année",
+      "3A": "3ème année",
       "EXTRA": "Hors programme",
       "PERSONAL": "Personnel"
     }
   },
+
   "skills": {
     "title": "Mes Compétences",
     "subtitle": "Technologies et compétences que je maîtrise",
     "usedIn": "Utilisé dans :",
     "categories": {
-      "web": "Développement Web",
-      "devops": "DevOps",
-      "languages": "Langages & Outils",
-      "soft": "Soft Skills"
+      "languages": "Langages",
+      "frameworks": "Frameworks",
+      "database": "Bases de données",
+      "devops": "Outils & DevOps",
+      "spoken": "Langues"
     }
   },
+
   "contact": {
     "title": "Contactez-moi",
     "subtitle": "Vous avez une opportunité de stage, un projet freelance ou juste envie de discuter ?",
@@ -74,12 +106,13 @@
     },
     "success": {
       "title": "Message envoyé !",
-      "message": "Merci pour votre message. une reponse vous sera adresse dans les plus brefs délais.",
+      "message": "Merci pour votre message. Une réponse vous sera adressée dans les plus brefs délais.",
       "sendAnother": "Envoyer un autre message"
     },
     "error": "Une erreur est survenue. Veuillez réessayer.",
     "privacy": "Vos informations ne seront utilisées que pour vous répondre."
   },
+
   "admin": {
     "title": "CMS Admin",
     "subtitle": "Gérez votre portfolio",
@@ -88,6 +121,7 @@
       "dashboard": "Dashboard",
       "projects": "Projets",
       "skills": "Compétences",
+      "experience": "Parcours",
       "about": "À propos",
       "contacts": "Messages"
     },
@@ -130,9 +164,13 @@
       "new": "Nouveau"
     }
   },
+
   "footer": {
-    "rights": "© 2024 Boris CHENG - Tous droits réservés"
+    "rights": "© 2024 Boris CHENG - Tous droits réservés",
+    "madeWith": "Fait avec",
+    "and": "et"
   },
+
   "common": {
     "loading": "Chargement..."
   }

@@ -9,7 +9,6 @@ export async function POST(req: Request) {
     const body = await req.json()
     const { firstName, lastName, email, phone, subject, message } = body
 
-    // Validation
     if (!firstName || !lastName || !email || !message) {
       return NextResponse.json(
         { error: 'Required fields missing' },
@@ -38,8 +37,8 @@ export async function POST(req: Request) {
 
     try {
       await resend.emails.send({
-        from: 'Portfolio Contact <onboarding@resend.dev>',
-        to: process.env.CONTACT_EMAIL || 'your@email.com',
+        from: 'Portfolio <contact@borischeng.fr>',
+        to: process.env.CONTACT_EMAIL || 'cheng.boris@hotmail.com',
         reply_to: email,
         subject: subject || `New message from ${firstName} ${lastName}`,
         html: `

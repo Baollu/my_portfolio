@@ -90,3 +90,58 @@ model AboutSection {
 
     @@map("about_sections")
 }
+
+// NOUVELLES TABLES
+
+model Experience {
+    id          String   @id @default(cuid())
+    title       String
+    company     String
+    location    String?
+    type        String   @default("stage")
+    startDate   DateTime @map("start_date")
+    endDate     DateTime? @map("end_date")
+    description String   @db.Text
+    skills      String[]
+    order       Int      @default(0)
+    published   Boolean  @default(true)
+    createdAt   DateTime @default(now()) @map("created_at")
+    updatedAt   DateTime @updatedAt @map("updated_at")
+
+    @@map("experiences")
+}
+
+model Education {
+    id          String   @id @default(cuid())
+    title       String
+    school      String
+    location    String?
+    startDate   DateTime @map("start_date")
+    endDate     DateTime? @map("end_date")
+    description String?  @db.Text
+    order       Int      @default(0)
+    published   Boolean  @default(true)
+    createdAt   DateTime @default(now()) @map("created_at")
+    updatedAt   DateTime @updatedAt @map("updated_at")
+
+    @@map("educations")
+}
+
+model SocialLink {
+    id        String  @id @default(cuid())
+    platform  String  @unique
+    url       String
+    icon      String?
+    order     Int     @default(0)
+    published Boolean @default(true)
+
+    @@map("social_links")
+}
+
+model SiteConfig {
+    id              String  @id @default(cuid())
+    key             String  @unique
+    value           String  @db.Text
+    
+    @@map("site_config")
+}
